@@ -1989,4 +1989,14 @@ extern RSDKUnknownInfo *UnknownInfo;
 #endif
 extern RSDKScreenInfo *ScreenInfo;
 
+#if GAME_CUSTOMLINKLOGIC
+// DEFINE THIS YOURSELF!!!!
+// This runs after LinkGameLogicDLL registers objects
+#if RETRO_REV02
+void LinkGameLogic(EngineInfo *info);
+#else
+void LinkGameLogic(EngineInfo info);
+#endif
+#endif
+
 #endif /* GAMELINK_H */

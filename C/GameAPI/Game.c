@@ -52,7 +52,7 @@ GlobalVariables *globals;
 // LINK GAME/MOD LOGIC
 // -------------------------
 
-#if RETRO_REV02 
+#if RETRO_REV02
 void LinkGameLogicDLL(EngineInfo *info)
 {
     memset(&API, 0, sizeof(APIFunctionTable));
@@ -82,6 +82,10 @@ void LinkGameLogicDLL(EngineInfo *info)
 
     UnknownInfo = info->unknownInfo;
     ScreenInfo  = info->screenInfo;
+
+#if GAME_CUSTOMLINKLOGIC
+    LinkGameLogic(info);
+#endif
 }
 #else
 void LinkGameLogicDLL(EngineInfo info)
@@ -107,5 +111,9 @@ void LinkGameLogicDLL(EngineInfo info)
     AnalogStickInfoL = info.stickInfoL;
     TouchInfo        = info.touchInfo;
     ScreenInfo       = info.screenInfo;
+
+#if GAME_CUSTOMLINKLOGIC
+    LinkGameLogic(&info);
+#endif
 }
 #endif

@@ -19,6 +19,8 @@
 #define TYPE_COUNT      (0x100)
 #define TYPEGROUP_COUNT (TYPE_COUNT + 4)
 
+#define RSDK_THIS(obj)                    auto *self = (obj *)sceneInfo->entity
+#define RSDK_THIS_GEN()                   GameObject::Entity *self = (GameObject::Entity *)sceneInfo->entity
 #define RSDK_GET_ENTITY(slot, class)      (GameObject::Get<class>(slot))
 #define RSDK_GET_ENTITY_GEN(slot)         (GameObject::Get(slot))
 #define CREATE_ENTITY(object, data, x, y) (GameObject::Create<object>(data, x, y))
