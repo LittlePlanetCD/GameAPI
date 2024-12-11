@@ -12,7 +12,11 @@
 // -------------------------
 
 extern "C" {
+#if RETRO_REV02
 DLLExport void LinkGameLogicDLL(RSDK::EngineInfo *info);
+#else
+DLLExport void LinkGameLogicDLL(RSDK::EngineInfo info);
+#endif
 
 // custom-added extra little bit of info to let the engine know what RSDK version it is
 DLLExport extern int32 RSDKRevision;

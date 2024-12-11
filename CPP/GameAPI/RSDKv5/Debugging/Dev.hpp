@@ -69,14 +69,7 @@ inline void AddViewableVariable(const char *name, void *value, ViewableVarTypes 
     RSDKTable->AddViewableVariable(name, value, type, min, max);
 }
 #else
-inline void Print(PrintModes severity, const char *message, ...)
-{
-    char buffer[0x100];
-    va_list args;
-    va_start(args, message);
-    vsprintf_s(buffer, message, args);
-    RSDKTable->PrintMessage(buffer, MESSAGE_STRING);
-};
+inline void Print(void *msg, uint8 type) { RSDKTable->PrintMessage(msg, type); };
 #endif
 
 } // namespace Dev
