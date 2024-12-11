@@ -863,5 +863,9 @@ inline void InitEngineInfo(EngineInfo *info)
 #if GAME_CUSTOMLINKLOGIC
 // DEFINE THIS YOURSELF!!!!
 // This runs after LinkGameLogicDLL registers objects
+#if RETRO_REV02
 void LinkGameLogic(RSDK::EngineInfo *info);
+#else
+void LinkGameLogic(RSDK::EngineInfo info);
+#endif
 #endif
