@@ -11,10 +11,18 @@
 // OBJECTS
 // -------------------------
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #if RETRO_REV02
 DLLExport void LinkGameLogicDLL(EngineInfo *info);
 #else
 DLLExport void LinkGameLogicDLL(EngineInfo info);
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 
 #if RETRO_USE_MOD_LOADER
