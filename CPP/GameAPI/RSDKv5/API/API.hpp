@@ -14,7 +14,7 @@ namespace API
 {
 
 #if !RETRO_REV02
-void *GetFunction(const char *funcName) { return RSDKTable->GetAPIFunction(funcName); }
+inline void *GetFunction(const char *funcName) { return RSDKTable->GetAPIFunction(funcName); }
 #endif
 
 #if RETRO_REV02
