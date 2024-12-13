@@ -96,6 +96,7 @@ enum DefaultObjects {
 #endif
 
     TYPE_DEFAULT_COUNT, // max
+    TYPE_BLANK = TYPE_DEFAULTOBJECT,
 };
 
 enum TileCollisionModes {

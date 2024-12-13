@@ -13,6 +13,9 @@ enum CollisionModes { CMODE_FLOOR, CMODE_LWALL, CMODE_ROOF, CMODE_RWALL };
 enum CollisionSides { C_NONE, C_TOP, C_LEFT, C_RIGHT, C_BOTTOM };
 
 struct Hitbox {
+    inline Hitbox() : left(0), top(0), right(0), bottom(0) {};
+    inline Hitbox(int16 Left, int16 Top, int16 Right, int16 Bottom) : left(Left), top(Top), right(Right), bottom(Bottom) {};
+
     int16 left;
     int16 top;
     int16 right;
