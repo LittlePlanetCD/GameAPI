@@ -377,11 +377,11 @@ typedef enum {
 #endif
 
 #if RETRO_REV0U
-#define HasNotifyCallback() RSDKTable->NotifyCallback != NULL
+#define HasNotifyCallback() RSDK.NotifyCallback != NULL
 
 #define NotifyCallback(callback, param1, param2, param3)                                                                                             \
     if (HasNotifyCallback())                                                                                                                         \
-        RSDKTable->NotifyCallback(callback, param1, param2, param3);
+        RSDK.NotifyCallback(callback, param1, param2, param3);
 #else
 #define HasNotifyCallback() false
 
