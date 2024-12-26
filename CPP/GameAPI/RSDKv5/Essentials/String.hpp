@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Types.hpp"
-#include "../Graphics/Sprite.hpp"
 
 namespace RSDK
 {
@@ -41,18 +40,23 @@ public:
     inline void Init(const char *str, uint32 length = 0) { RSDKTable->InitString(this, str, length); }
     inline void Set(const char *str) { RSDKTable->SetString(this, str); }
 
-    String &Prepend(String *str);
-    String &Prepend(const char *str);
+    inline void Prepend(String *str) { *this = str + *this; }
+    inline void Prepend(const char *str) { *this = String(str) + *this; }
 
-    String &Append(String *str);
-    String &Append(const char *str);
+    inline void Append(String *str) { RSDKTable->AppendString(this, str); }
+    inline void Append(const char *str) { RSDKTable->AppendText(this, str); }
 
     static inline void Copy(String *dst, String *src) { RSDKTable->CopyString(dst, src); }
     static inline void Copy(String *dst, const char *src) { RSDKTable->SetString(dst, src); }
     static bool32 Compare(String *strA, String *strB, bool32 exactMatch) { return RSDKTable->CompareStrings(strA, strB, exactMatch); }
 
-    void CStr(char *buffer) { RSDKTable->GetCString(buffer, this); }
-    const char *ToString();
+    inline void CStr(char *buffer) { RSDKTable->GetCString(buffer, this); }
+    inline const char *ToString()
+    {
+        char buffer[0x400];
+        this->CStr(buffer);
+        return buffer;
+    }
 
     inline bool32 Initialized() { return chars != nullptr; }
     inline bool32 Empty() { return !length; }
