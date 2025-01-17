@@ -4,6 +4,7 @@
 #include "../EngineAPI.hpp"
 
 #if RETRO_USE_MOD_LOADER
+#include <functional>
 
 namespace RSDK
 {
@@ -45,6 +46,7 @@ namespace Mod
 
 // Mod Callbacks & Public Functions
 inline void AddModCallback(int32 callbackID, void (*callback)(void *)) { modTable->AddModCallback(callbackID, callback); }
+inline void AddModCallback_STD(int32 callbackID, std::function<void(void *)> callback) { modTable->AddModCallback_STD(callbackID, callback); }
 inline void AddPublicFunction(const char *functionName, void *functionPtr) { modTable->AddPublicFunction(functionName, functionPtr); }
 inline void *GetPublicFunction(const char *id, const char *functionName) { return modTable->GetPublicFunction(id, functionName); }
 
