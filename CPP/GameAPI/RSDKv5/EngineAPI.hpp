@@ -12,6 +12,9 @@
 
 #include <stdio.h>
 #include <cstring>
+#if RETRO_USE_MOD_LOADER
+#include <functional>
+#endif
 
 namespace RSDK
 {
@@ -114,14 +117,23 @@ struct ModFunctionTable {
                            uint32 modClassSize, void (*update)(void), void (*lateUpdate)(void), void (*staticUpdate)(void), void (*draw)(void),
                            void (*create)(void *), void (*stageLoad)(void), void (*editorLoad)(void), void (*editorDraw)(void),
                            void (*serialize)(void), void (*staticLoad)(void *staticVars), const char *inherited);
+    void (*RegisterObject_STD)(void **staticVars, void **modStaticVars, const char *name, uint32 entityClassSize, uint32 staticClassSize,
+                               uint32 modClassSize, std::function<void()> update, std::function<void()> lateUpdate,
+                               std::function<void()> staticUpdate, std::function<void()> draw, std::function<void(void *)> create,
+                               std::function<void()> stageLoad, std::function<void()> editorLoad, std::function<void()> editorDraw,
+                               std::function<void()> serialize, std::function<void(void *)> staticLoad, const char *inherited);
 #else
     void (*RegisterGlobals)(const char *globalsPath, void **globals, uint32 size);
     void (*RegisterObject)(void **staticVars, void **modStaticVars, const char *name, uint32 entityClassSize, uint32 staticClassSize,
                            uint32 modClassSize, void (*update)(void), void (*lateUpdate)(void), void (*staticUpdate)(void), void (*draw)(void),
                            void (*create)(void *), void (*stageLoad)(void), void (*editorLoad)(void), void (*editorDraw)(void),
                            void (*serialize)(void), const char *inherited);
+    void (*RegisterObject_STD)(void **staticVars, void **modStaticVars, const char *name, uint32 entityClassSize, uint32 staticClassSize,
+                               uint32 modClassSize, std::function<void()> update, std::function<void()> lateUpdate,
+                               std::function<void()> staticUpdate, std::function<void()> draw, std::function<void(void *)> create,
+                               std::function<void()> stageLoad, std::function<void()> editorLoad, std::function<void()> editorDraw,
+                               std::function<void()> serialize, const char *inherited);
 #endif
-    void *RegisterObject_STD;
     void (*RegisterObjectHook)(void **staticVars, const char *staticName);
     void *(*FindObject)(const char *name);
     void *(*GetGlobals)(void);
@@ -136,7 +148,7 @@ struct ModFunctionTable {
 
     // Mod Callbacks & Public Functions
     void (*AddModCallback)(int32 callbackID, void (*callback)(void *));
-    void *AddModCallback_STD;
+    void (*AddModCallback_STD)(int32 callbackID, std::function<void(void *)> callback);
     void (*AddPublicFunction)(const char *functionName, void *functionPtr);
     void *(*GetPublicFunction)(const char *id, const char *functionName);
 
