@@ -1765,6 +1765,8 @@ typedef struct {
         RSDK.SetEditableVar(type, buffer, (uint8)object->classID, offsetof(Entity##object, var) + sizeof(arrType) * i);                              \
     }
 
+#define RSDK_INIT_STATIC_VARS(object) memset(sVars, 0, sizeof(Object##object))
+
 // Some extra precaution to prevent crashes in editor
 #define RSDK_ACTIVE_VAR(object, var)                                                                                                                 \
     if (object) {                                                                                                                                    \
