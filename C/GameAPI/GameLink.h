@@ -93,7 +93,7 @@ typedef uint32 color;
 #define FABS(a)                        ((a) > 0 ? (a) : -(a))
 
 #define SET_BIT(value, set, pos) ((value) ^= (-(int32)(set) ^ (value)) & (1 << (pos)))
-#define GET_BIT(b, pos)          ((b) >> (pos)&1)
+#define GET_BIT(b, pos)          ((b) >> (pos) & 1)
 
 #define INT_TO_VOID(x)   (void *)(size_t)(x)
 #define FLOAT_TO_VOID(x) INT_TO_VOID(*(int32 *)&(x))
@@ -106,7 +106,7 @@ typedef uint32 color;
 #define FROM_FIXED(x) ((x) >> 16)
 
 // floating point variants
-#define TO_FIXED_F(x)   ((x)*65536.0)
+#define TO_FIXED_F(x)   ((x) * 65536.0)
 #define FROM_FIXED_F(x) ((x) / 65536.0)
 
 // -------------------------
@@ -1404,7 +1404,8 @@ typedef struct {
 
     // User File Management
     void (*LoadUserFile)(const char *name, void *buffer, uint32 size, void (*callback)(int32 status)); // load user file from game dir
-    void (*SaveUserFile)(const char *name, void *buffer, uint32 size, void (*callback)(int32 status), bool32 compressed); // save user file to game dir
+    void (*SaveUserFile)(const char *name, void *buffer, uint32 size, void (*callback)(int32 status),
+                         bool32 compressed);                                  // save user file to game dir
     void (*DeleteUserFile)(const char *name, void (*callback)(int32 status)); // delete user file from game dir
 
     // User DBs
@@ -1627,7 +1628,7 @@ typedef struct {
     uint16 (*GetTile)(uint16 layer, int32 x, int32 y);
     void (*SetTile)(uint16 layer, int32 x, int32 y, uint16 tile);
     void (*CopyTileLayer)(uint16 dstLayerID, int32 dstStartX, int32 dstStartY, uint16 srcLayerID, int32 srcStartX, int32 srcStartY, int32 countX,
-                           int32 countY);
+                          int32 countY);
     void (*ProcessParallax)(TileLayer *tileLayer);
     ScanlineInfo *(*GetScanlines)(void);
 
@@ -1768,6 +1769,8 @@ typedef struct {
         sprintf_s(buffer, (int32)sizeof(buffer), "%s%d", #var, i);                                                                                   \
         RSDK.SetEditableVar(type, buffer, (uint8)object->classID, offsetof(Entity##object, var) + sizeof(arrType) * i);                              \
     }
+
+#define RSDK_INIT_STATIC_VARS(object) memset(sVars, 0, sizeof(Object##object))
 
 // Some extra precaution to prevent crashes in editor
 #define RSDK_ACTIVE_VAR(object, var)                                                                                                                 \
