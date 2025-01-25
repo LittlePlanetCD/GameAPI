@@ -161,9 +161,9 @@ inline void DrawBlendedFace(Vector2 *vertices, color *vertColors, int32 vertCoun
     RSDKTable->DrawBlendedFace(vertices, vertColors, vertCount, alpha, inkEffect);
 }
 
-inline void DrawDeformedSprite(SpriteSheet sheet, int32 inkEffect, bool32 screenRelative)
+inline void DrawDeformedSprite(SpriteSheet sheet, int32 inkEffect, int32 alpha)
 {
-    RSDKTable->DrawDeformedSprite(sheet.id, inkEffect, screenRelative);
+    RSDKTable->DrawDeformedSprite(sheet.id, inkEffect, alpha);
 }
 
 inline void DrawTile(Tile *tiles, int32 countX, int32 countY, Vector2 *position, Vector2 *offset, bool32 screenRelative)
