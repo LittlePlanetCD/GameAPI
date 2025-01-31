@@ -263,6 +263,8 @@ struct GameObject {
     static inline void Reset(int32 slot, uint32 type, void *data) { RSDKTable->ResetEntitySlot(slot, type, data); }
     static inline void Reset(int32 slot, uint32 type, int32 data) { RSDKTable->ResetEntitySlot(slot, type, INT_TO_VOID(data)); }
 
+    static inline void Destroy(int32 slot) { Reset(slot, TYPE_DEFAULTOBJECT, nullptr); }
+
     template <typename T> static inline std::list<T *> GetEntities(ForeachTypes type)
     {
         std::list<T *> list;
