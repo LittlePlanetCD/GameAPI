@@ -367,6 +367,7 @@ enum NotifyCallbackIDs {
     NOTIFY_1004                = 1004,
     NOTIFY_1005                = 1005,
     NOTIFY_TITLECARD_INIT      = 1006,
+    NOTIFY_1007                = 1007,
 };
 #endif
 
