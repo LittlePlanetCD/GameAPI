@@ -457,6 +457,8 @@ template <typename E> static inline typename E::Static *RegisterStaticVars(typen
 }
 #endif
 
+#define $(obj) (obj::sVars)
+
 #define RSDK_REGISTER_OBJECT(obj) obj::Static *obj::sVars = RSDK::RegisterObject<obj>(&obj::sVars, #obj);
 
 #if RETRO_REV02
