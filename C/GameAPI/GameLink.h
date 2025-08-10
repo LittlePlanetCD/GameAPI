@@ -1328,7 +1328,7 @@ typedef struct {
     void (*GetCollisionInfo)(CollisionMask **masks, TileInfo **tileInfo);
 #endif
 #if RETRO_MOD_LOADER_VER >= 3
-    void *(*HookPublicFunction)(const char *functionName, void *functionPtr);
+    void (*HookPublicFunction)(const char *functionName, void *functionPtr, void **originalPtr);
 #endif
 } ModFunctionTable;
 #endif
@@ -1907,12 +1907,12 @@ typedef struct {
 #define GET_PUBLIC_FUNC(modID, name, returnType, ...) returnType (*name)(__VA_ARGS__) = Mod.GetPublicFunction(modID, #name)
 
 #if RETRO_MOD_LOADER_VER >= 3
-#define DEFINE_HOOK_FUNC(name, returnType, ...)                       \
-    returnType (*Original_##name)(__VA_ARGS__);                       \
-    returnType Hook_##name(__VA_ARGS__);                              \
-    static void RegisterHook_##name(void) {                           \
-        Original_##name = Mod.HookPublicFunction(#name, Hook_##name); \
-    }                                                                 \
+#define DEFINE_HOOK_FUNC(name, returnType, ...)                               \
+    returnType (*Original_##name)(__VA_ARGS__);                               \
+    returnType Hook_##name(__VA_ARGS__);                                      \
+    static void RegisterHook_##name(void) {                                   \
+        Mod.HookPublicFunction(#name, Hook_##name, (void**)&Original_##name); \
+    }                                                                         \
     returnType Hook_##name(__VA_ARGS__)
 
 #define REGISTER_HOOK_FUNC(name) do { RegisterHook_##name(); } while (0)
