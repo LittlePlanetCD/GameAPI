@@ -8,21 +8,8 @@ struct String {
 public:
     String() {}
     String(const char *str) { Init(str); }
-    String(String &other) { Init(other.ToString()); }
-    String(String *other) { Init(other->ToString()); }
-
-    String(const String &other)
-    {
-        chars  = other.chars;
-        length = other.length;
-        size   = other.size;
-    }
-    String(const String *other)
-    {
-        chars  = other->chars;
-        length = other->length;
-        size   = other->size;
-    }
+    String(String &other) { Copy(this, &other); }
+    String(String *other) { Copy(this, other); }
 
     inline bool operator==(String other) { return Compare(this, &other, true); }
     inline String &operator+=(String other)
@@ -51,12 +38,6 @@ public:
     static bool32 Compare(String *strA, String *strB, bool32 exactMatch) { return RSDKTable->CompareStrings(strA, strB, exactMatch); }
 
     inline void CStr(char *buffer) { RSDKTable->GetCString(buffer, this); }
-    inline const char *ToString()
-    {
-        char buffer[0x400];
-        this->CStr(buffer);
-        return buffer;
-    }
 
     inline bool32 Initialized() { return chars != nullptr; }
     inline bool32 Empty() { return !length; }
