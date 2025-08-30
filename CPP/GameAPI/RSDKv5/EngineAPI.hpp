@@ -236,6 +236,11 @@ struct ModFunctionTable {
     void (*CopyCollisionMask)(uint16 dst, uint16 src, uint8 cPlane, uint8 cMode);
     void (*GetCollisionInfo)(CollisionMask **masks, TileInfo **tileInfo);
 #endif
+
+#if RETRO_MOD_LOADER_VER >= 3
+    // Mod hooks (Public Functions override)
+    void (*HookPublicFunction)(const char *id, const char *functionName, void *functionPtr, void **originalPtr);
+#endif
 };
 #endif
 
