@@ -240,6 +240,9 @@ struct ModFunctionTable {
 #if RETRO_MOD_LOADER_VER >= 3
     // Mod hooks (Public Functions override)
     void (*HookPublicFunction)(const char *id, const char *functionName, void *functionPtr, void **originalPtr);
+
+    // Platform info
+    int32 (*GetRetroPlatform)(void);
 #endif
 };
 #endif

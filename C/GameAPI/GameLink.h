@@ -1201,6 +1201,22 @@ typedef enum {
     SUPER_EDITORDRAW,
     SUPER_SERIALIZE
 } ModSuper;
+
+#if RETRO_MOD_LOADER_VER >= 3
+typedef enum {
+    RETRO_WIN     = 0,
+    RETRO_PS4     = 1,
+    RETRO_XB1     = 2,
+    RETRO_SWITCH  = 3,
+    // CUSTOM
+    RETRO_OSX     = 4,
+    RETRO_LINUX   = 5,
+    RETRO_iOS     = 6,
+    RETRO_ANDROID = 7,
+    RETRO_UWP     = 8,
+    RETRO_OTHER   = 9
+} RetroPlatform;
+#endif
 #endif
 
 // -------------------------
@@ -1328,7 +1344,11 @@ typedef struct {
     void (*GetCollisionInfo)(CollisionMask **masks, TileInfo **tileInfo);
 #endif
 #if RETRO_MOD_LOADER_VER >= 3
+    // Mod hooks (Public Functions override)
     void (*HookPublicFunction)(const char *id, const char *functionName, void *functionPtr, void **originalPtr);
+
+    // Platform info
+    int32 (*GetRetroPlatform)(void);
 #endif
 } ModFunctionTable;
 #endif
