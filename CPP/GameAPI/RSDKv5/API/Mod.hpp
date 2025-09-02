@@ -41,6 +41,24 @@ enum ModSuper {
     SUPER_SERIALIZE
 };
 
+#if RETRO_MOD_LOADER_VER >= 3
+enum RetroPlatform {
+    RETRO_WIN     = 0,
+    RETRO_PS4     = 1,
+    RETRO_XB1     = 2,
+    RETRO_SWITCH  = 3,
+    // CUSTOM
+    RETRO_OSX     = 4,
+    RETRO_LINUX   = 5,
+    RETRO_iOS     = 6,
+    RETRO_ANDROID = 7,
+    RETRO_UWP     = 8,
+    RETRO_OTHER   = 9
+};
+
+inline int32 GetRetroPlatform(void) { return modTable->GetRetroPlatform(); }
+#endif
+
 namespace Mod
 {
 
