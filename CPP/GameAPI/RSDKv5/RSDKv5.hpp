@@ -14,6 +14,7 @@
 #include "Math/Matrix.hpp"
 #include "Game/Object.hpp"
 #include "Graphics/Sprite.hpp"
+#include "Essentials/IO.hpp"
 #include "Essentials/String.hpp"
 #include "Game/Collision.hpp"
 #include "Game/StateMachine.hpp"
