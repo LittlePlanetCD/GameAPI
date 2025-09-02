@@ -108,6 +108,11 @@ enum GameLanguages {
 };
 
 #if RETRO_USE_MOD_LOADER
+#if RETRO_MOD_LOADER_VER >= 3
+// Opaque pointer to a file descriptor
+typedef void* IOHandle;
+#endif
+
 // Mod Table
 struct ModFunctionTable {
     // Registration & Core
@@ -235,6 +240,22 @@ struct ModFunctionTable {
     void (*RWallCollision)(CollisionSensor *sensor);
     void (*CopyCollisionMask)(uint16 dst, uint16 src, uint8 cPlane, uint8 cMode);
     void (*GetCollisionInfo)(CollisionMask **masks, TileInfo **tileInfo);
+#endif
+
+#if RETRO_MOD_LOADER_VER >= 3
+    // Mod hooks (Public Functions override)
+    void (*HookPublicFunction)(const char *id, const char *functionName, void *functionPtr, void **originalPtr);
+
+    // Platform info
+    int32 (*GetRetroPlatform)(void);
+
+    // IO
+    IOHandle (*IOOpen)(const char *filename, const char *mode);
+    uint32 (*IORead)(void *buffer, uint32 elementSize, uint32 elementCount, IOHandle file);
+    int32 (*IOSeek)(IOHandle file, int32 offset, int32 whence);
+    int32 (*IOTell)(IOHandle file);
+    int32 (*IOClose)(IOHandle file);
+    uint32 (*IOWrite)(const void *buffer, uint32 elementSize, uint32 elementCount, IOHandle file);
 #endif
 };
 #endif

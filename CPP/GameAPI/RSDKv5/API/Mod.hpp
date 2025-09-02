@@ -41,6 +41,24 @@ enum ModSuper {
     SUPER_SERIALIZE
 };
 
+#if RETRO_MOD_LOADER_VER >= 3
+enum RetroPlatform {
+    RETRO_WIN     = 0,
+    RETRO_PS4     = 1,
+    RETRO_XB1     = 2,
+    RETRO_SWITCH  = 3,
+    // CUSTOM
+    RETRO_OSX     = 4,
+    RETRO_LINUX   = 5,
+    RETRO_iOS     = 6,
+    RETRO_ANDROID = 7,
+    RETRO_UWP     = 8,
+    RETRO_OTHER   = 9
+};
+
+inline int32 GetRetroPlatform(void) { return modTable->GetRetroPlatform(); }
+#endif
+
 namespace Mod
 {
 
@@ -147,6 +165,33 @@ inline void RegisterStateHook(void (*state)(), bool32 (*hook)(bool32 skippedStat
 }
 
 extern const char *modID;
+
+#if RETRO_MOD_LOADER_VER >= 3
+inline void HookPublicFunction(const char *id, const char *functionName, void *functionPtr, void **originalPtr)
+{
+    modTable->HookPublicFunction(id, functionName, functionPtr, originalPtr);
+}
+
+// FIXME: Find a more C++ way of handling it, struct/namespace?
+
+// Generic hook
+#define DEFINE_PUBLIC_HOOK_FUNC(modID, name, returnType, ...)                        \
+    static returnType (*Original_##name)(__VA_ARGS__);                               \
+    static returnType Hook_##name(__VA_ARGS__);                                      \
+    static void RegisterHook_##name(void) {                                          \
+        HookPublicFunction(modID, #name, Hook_##name, (void**)&Original_##name);     \
+    }                                                                                \
+    static returnType Hook_##name(__VA_ARGS__)
+
+// Hook into the current game's public functions
+#define DEFINE_GAME_HOOK_FUNC(name, returnType, ...) DEFINE_PUBLIC_HOOK_FUNC(NULL, name, returnType, __VA_ARGS__)
+
+// Hook into other mods' public functions by ID
+#define DEFINE_MOD_HOOK_FUNC(modID, name, returnType, ...) DEFINE_PUBLIC_HOOK_FUNC(modID, name, returnType, __VA_ARGS__)
+
+// Register a defined hook of the same name
+#define REGISTER_HOOK_FUNC(name) do { RegisterHook_##name(); } while (0)
+#endif
 
 } // namespace Mod
 
