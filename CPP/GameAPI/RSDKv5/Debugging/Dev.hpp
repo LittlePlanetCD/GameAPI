@@ -71,6 +71,14 @@ inline void AddViewableVariable(const char *name, void *value, ViewableVarTypes 
 {
     RSDKTable->AddViewableVariable(name, value, type, min, max);
 }
+
+inline void AddViewableVariable(const char *name, bool32 *value) { AddViewableVariable(name, value, VIEWVAR_BOOL, 0, 1); }
+inline void AddViewableVariable(const char *name, uint8 *value, int32 min, int32 max) { AddViewableVariable(name, value, VIEWVAR_UINT8, min, max); }
+inline void AddViewableVariable(const char *name, uint16 *value, int32 min, int32 max) { AddViewableVariable(name, value, VIEWVAR_UINT16, min, max); }
+inline void AddViewableVariable(const char *name, uint32 *value, int32 min, int32 max) { AddViewableVariable(name, value, VIEWVAR_UINT32, min, max); }
+inline void AddViewableVariable(const char *name, int8 *value, int32 min, int32 max) { AddViewableVariable(name, value, VIEWVAR_INT8, min, max); }
+inline void AddViewableVariable(const char *name, int16 *value, int32 min, int32 max) { AddViewableVariable(name, value, VIEWVAR_INT16, min, max); }
+inline void AddViewableVariable(const char *name, int32 *value, int32 min, int32 max) { AddViewableVariable(name, value, VIEWVAR_INT32, min, max); }
 #else
 inline void Print(void *msg, uint8 type) { RSDKTable->PrintMessage(msg, type); };
 #endif
