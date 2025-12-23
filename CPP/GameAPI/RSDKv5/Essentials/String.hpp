@@ -52,7 +52,7 @@ public:
         return RSDKTable->GetStringWidth(aniFrames.aniFrames, listID, this, start, length, spacing);
     }
 
-    inline void LoadStrings(const char *filepath) { RSDKTable->LoadStringList(this, filepath, 16); }
+    inline void LoadStrings(const char *filepath, uint32 charSize = 16) { RSDKTable->LoadStringList(this, filepath, charSize); }
     inline bool32 Split(String *list, int32 startID, int32 count) { return RSDKTable->SplitStringList(list, this, startID, count); }
 
     uint16 *chars = nullptr;
