@@ -81,6 +81,10 @@ inline void LoadShader(const char *shaderName, bool32 linear) { modTable->LoadSh
 // Misc
 inline void *GetGlobals() { return modTable->GetGlobals(); }
 
+#if RETRO_MOD_LOADER_VER >= 3
+inline void OpenModMenu() { modTable->OpenModMenu(); }
+#endif
+
 namespace List
 {
 // Mod Info
