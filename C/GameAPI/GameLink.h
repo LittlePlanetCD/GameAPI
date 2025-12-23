@@ -1388,6 +1388,9 @@ typedef struct {
     // Dev Menu Characters
     void (*AddDevMenuCharacter)(const char *playerName, int32 id);
     int32 (*GetActiveDevMenuCharacter)(void);
+
+    // Mod Menu
+    void (*OpenModMenu)(void);
 #endif
 } ModFunctionTable;
 #endif
