@@ -11,6 +11,19 @@ public:
     String(String &other) { Copy(this, &other); }
     String(String *other) { Copy(this, other); }
 
+    String(const String &other)
+    {
+        chars  = other.chars;
+        length = other.length;
+        size   = other.size;
+    }
+    String(const String *other)
+    {
+        chars  = other->chars;
+        length = other->length;
+        size   = other->size;
+    }
+
     inline bool operator==(String other) { return Compare(this, &other, true); }
     inline String &operator+=(String other)
     {
