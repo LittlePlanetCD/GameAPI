@@ -21,8 +21,8 @@
 #define TYPE_COUNT      (0x100)
 #define TYPEGROUP_COUNT (TYPE_COUNT + 4)
 
-#define RSDK_THIS(obj)                    auto *self = (obj *)sceneInfo->entity
-#define RSDK_THIS_GEN()                   GameObject::Entity *self = (GameObject::Entity *)sceneInfo->entity
+#define RSDK_THIS(obj)                    auto *self = (obj *)this
+#define RSDK_THIS_GEN()                   GameObject::Entity *self = (GameObject::Entity *)this
 #define RSDK_GET_ENTITY(slot, class)      (GameObject::Get<class>(slot))
 #define RSDK_GET_ENTITY_GEN(slot)         (GameObject::Get(slot))
 #define CREATE_ENTITY(object, data, x, y) (GameObject::Create<object>(data, x, y))
@@ -33,12 +33,17 @@
 #define foreach_group(type, entityOut) for (auto entityOut : GameObject::GetEntities<type>(FOR_GROUP_ENTITIES))
 #endif
 
+#ifndef foreach_break
 #define foreach_break                                                                                                                                \
     RSDK::RSDKTable->BreakForeachLoop();                                                                                                             \
     break
+#endif
+
+#ifndef foreach_return
 #define foreach_return                                                                                                                               \
     RSDK::RSDKTable->BreakForeachLoop();                                                                                                             \
     return
+#endif
 
 namespace RSDK
 {
@@ -57,7 +62,7 @@ enum ActiveFlags {
     ACTIVE_DISABLED = 0xFF,
 };
 
-enum VariableTypes {
+enum VarTypes {
     VAR_UINT8,
     VAR_UINT16,
     VAR_UINT32,
@@ -123,17 +128,17 @@ struct GameObject {
     };
 
     struct Entity {
-        void Create(void *data){};
-        void Update(){};
-        void Draw(){};
-        void LateUpdate(){};
+        void Create(void *data) {};
+        void Update() {};
+        void Draw() {};
+        void LateUpdate() {};
 #if GAME_INCLUDE_EDITOR
-        void EditorDraw(){};
+        void EditorDraw() {};
 #endif
 
-        static void StageLoad(){};
-        static void Serialize(){};
-        static void StaticUpdate(){};
+        static void StageLoad() {};
+        static void Serialize() {};
+        static void StaticUpdate() {};
 #if RETRO_REV0U
         static void StaticLoad(Static *sVars)
         {
@@ -142,7 +147,7 @@ struct GameObject {
         };
 #endif
 #if GAME_INCLUDE_EDITOR
-        static void EditorLoad(){};
+        static void EditorLoad() {};
 #endif
 
 #if RETRO_REV0U
@@ -263,8 +268,7 @@ struct GameObject {
     static inline void Reset(int32 slot, uint32 type, void *data) { RSDKTable->ResetEntitySlot(slot, type, data); }
     static inline void Reset(int32 slot, uint32 type, int32 data) { RSDKTable->ResetEntitySlot(slot, type, INT_TO_VOID(data)); }
 
-    static inline void Destroy(int32 slot) { Reset(slot, TYPE_DEFAULTOBJECT, nullptr); }
-
+#if 0
     template <typename T> static inline std::list<T *> GetEntities(ForeachTypes type)
     {
         std::list<T *> list;
@@ -336,6 +340,49 @@ struct GameObject {
 
         return list;
     }
+#endif
+
+    template <typename T> struct EntityIterator {
+        T *entity;
+        uint16 group;
+        int32 type;
+
+        inline T *operator*() { return entity; }
+        inline bool operator!=(const EntityIterator &)
+        {
+            if (type == FOR_ALL_ENTITIES)
+                return RSDKTable->GetAllEntities(group, (void **)&entity);
+
+            if (type == FOR_ACTIVE_ENTITIES)
+                return RSDKTable->GetActiveEntities(group, (void **)&entity);
+
+#if RETRO_USE_MOD_LOADER && RETRO_MOD_LOADER_VER >= 2
+            if (type == FOR_GROUP_ENTITIES)
+                return modTable->GetGroupEntities(group, (void **)&entity);
+#endif
+
+            return false;
+        }
+        inline void operator++() const {}
+    };
+
+    template <typename T> struct EntityList {
+        uint16 group;
+        int32 type;
+
+        inline EntityIterator<T> begin() { return { nullptr, group, type }; }
+        inline EntityIterator<T> end() { return { nullptr, group, type }; }
+    };
+
+    template <typename T> static inline EntityList<T> GetEntities(int32 type)
+    {
+        return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type };
+    }
+
+    template <typename T> static inline EntityList<T> GetEntities(int32 type, uint16 group) { return { group, type }; }
+
+    static inline EntityList<Entity> GetEntities(int32 type) { return { (uint16)GROUP_ALL, type }; }
+    static inline EntityList<Entity> GetEntities(int32 type, uint16 group) { return { group, type }; }
 
     static inline uint16 Find(const char *name) { return RSDKTable->FindObject(name); }
 

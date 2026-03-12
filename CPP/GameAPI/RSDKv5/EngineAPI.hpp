@@ -107,6 +107,12 @@ enum GameLanguages {
     LANGUAGE_TC,
 };
 
+enum InputIDs {
+    INPUT_UNASSIGNED = -2,
+    INPUT_AUTOASSIGN = -1,
+    INPUT_NONE       = 0,
+};
+
 #if RETRO_USE_MOD_LOADER
 #if RETRO_MOD_LOADER_VER >= 3
 // Opaque pointer to a file descriptor
@@ -269,7 +275,7 @@ struct ModFunctionTable {
     void (*DrawDevString)(const char *string, int32 x, int32 y, int32 align, uint32 color);
 
     // Audio
-    void (*GetChannelAttributes)(uint8 channel, float *volume, float *panning, float *speed);
+    void (*GetChannelAttributes)(int32 channel, float *volume, float *panning, float *speed);
 
     // Dev Menu Characters
     void (*AddDevMenuCharacter)(const char *playerName, int32 id);
@@ -616,14 +622,14 @@ struct RSDKFunctionTable {
     uint16 (*GetSfx)(const char *path);
     int32 (*PlaySfx)(uint16 sfx, int32 loopPoint, int32 priority);
     void (*StopSfx)(uint16 sfx);
-    int32 (*PlayStream)(const char *filename, uint32 channel, uint32 startPos, uint32 loopPoint, bool32 loadASync);
-    void (*SetChannelAttributes)(uint8 channel, float volume, float pan, float speed);
-    void (*StopChannel)(uint32 channel);
-    void (*PauseChannel)(uint32 channel);
-    void (*ResumeChannel)(uint32 channel);
+    int32 (*PlayStream)(const char *filename, int32 channel, uint32 startPos, uint32 loopPoint, bool32 loadASync);
+    void (*SetChannelAttributes)(int32 channel, float volume, float pan, float speed);
+    void (*StopChannel)(int32 channel);
+    void (*PauseChannel)(int32 channel);
+    void (*ResumeChannel)(int32 channel);
     bool32 (*IsSfxPlaying)(uint16 sfx);
-    bool32 (*ChannelActive)(uint32 channel);
-    uint32 (*GetChannelPos)(uint32 channel);
+    bool32 (*ChannelActive)(int32 channel);
+    uint32 (*GetChannelPos)(int32 channel);
 
     // Videos & "HD Images"
     bool32 (*LoadVideo)(const char *filename, double startDelay, bool32 (*skipCallback)(void));
@@ -867,7 +873,7 @@ struct EngineInfo {
 #endif
 
 #else
-    RSDKFunctionTable *RSDKTable;
+    RSDKFunctionTable *RSDKFunctionTable;
 
     GameInfo *gameInfo;
     SceneInfo *sceneInfo;
@@ -896,8 +902,9 @@ inline void InitEngineInfo(EngineInfo *info)
 #if RETRO_REV02
     SKU = info->currentSKU;
 #endif
-    sceneInfo      = info->sceneInfo;
-    controllerInfo = info->controllerInfo;
+
+    sceneInfo = info->sceneInfo;
+    controllerInfo    = info->controllerInfo;
 
     analogStickInfoL = info->stickInfoL;
 #if RETRO_REV02
@@ -922,5 +929,9 @@ inline void InitEngineInfo(EngineInfo *info)
 #if GAME_CUSTOMLINKLOGIC
 // DEFINE THIS YOURSELF!!!!
 // This runs after LinkGameLogicDLL registers objects
+#if RETRO_REV02
 void LinkGameLogic(RSDK::EngineInfo *info);
+#else
+void LinkGameLogic(RSDK::EngineInfo info);
+#endif
 #endif

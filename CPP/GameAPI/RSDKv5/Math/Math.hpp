@@ -19,11 +19,11 @@
 #define UNUSED(x) (void)x
 
 // floating point variants
-#define TO_FIXED_F(x)   ((x)*65536.0)
-#define FROM_FIXED_F(x) ((x) / 65536.0)
+#define TO_FIXED_F(x)   ((x)*65536.0f)
+#define FROM_FIXED_F(x) ((x) / 65536.0f)
 
-#define TO_FIXED(x)   ((int)TO_FIXED_F(x))
-#define FROM_FIXED(x) ((int)FROM_FIXED_F(x))
+#define TO_FIXED(x)   ((x) << 16)
+#define FROM_FIXED(x) ((x) >> 16)
 
 #define RSDK_PI (3.1415927f)
 

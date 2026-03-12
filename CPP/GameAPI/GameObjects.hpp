@@ -13,18 +13,18 @@
 
 extern "C" {
 #if RETRO_REV02
-DLLExport void LinkGameLogicDLL(RSDK::EngineInfo *info);
+    DLLExport void LinkGameLogicDLL(RSDK::EngineInfo *info);
 #else
-DLLExport void LinkGameLogicDLL(RSDK::EngineInfo info);
+    DLLExport void LinkGameLogicDLL(RSDK::EngineInfo info);
 #endif
 
-// custom-added extra little bit of info to let the engine know what RSDK version it is
-DLLExport extern int32 RSDKRevision;
+    // custom-added extra little bit of info to let the engine know what RSDK version it is
+    DLLExport extern int32 RSDKRevision;
 
 #if RETRO_USE_MOD_LOADER
-DLLExport extern RSDK::ModVersionInfo modInfo;
+    DLLExport extern RSDK::ModVersionInfo modInfo;
 
-DLLExport bool32 LinkModLogic(RSDK::EngineInfo *info, const char *id);
+    DLLExport bool32 LinkModLogic(RSDK::EngineInfo *info, const char *id);
 #endif
 }
 

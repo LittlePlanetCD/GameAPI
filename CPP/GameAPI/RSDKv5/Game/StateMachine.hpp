@@ -10,11 +10,12 @@
 namespace RSDK
 {
 #define SET_CURRENT_STATE() RSDK::currentState = __func__
-#define StateMachine_None nullptr
+#define StateMachine_None   nullptr
 
 extern const char *currentState;
 
-template <typename E> static inline void *ToGenericPtr(void (E::*ptr)())
+template <typename E>
+static inline void *ToGenericPtr(void (E::*ptr)())
 {
     // converts from E:: -> void* without the compiler interfering :]
     union {
@@ -25,7 +26,8 @@ template <typename E> static inline void *ToGenericPtr(void (E::*ptr)())
     return u.out;
 }
 
-template <typename T> struct StateMachine {
+template <typename T>
+struct StateMachine {
 
     enum Priorities {
         PRIORITY_NONE   = 0,
@@ -73,7 +75,8 @@ template <typename T> struct StateMachine {
         return true;
     }
 
-    template <typename E> inline bool32 Set(void (E::*state)(), uint8 priority = PRIORITY_NONE)
+    template <typename E>
+    inline bool32 Set(void (E::*state)(), uint8 priority = PRIORITY_NONE)
     {
         if (priority < this->priority || this->priority == PRIORITY_LOCKED)
             return false;
@@ -91,7 +94,8 @@ template <typename T> struct StateMachine {
         return true;
     }
 
-    template <typename E> inline bool32 SetAndRun(void (E::*state)(), GameObject::Entity *self, uint8 priority = PRIORITY_NONE)
+    template <typename E>
+    inline bool32 SetAndRun(void (E::*state)(), GameObject::Entity *self, uint8 priority = PRIORITY_NONE)
     {
         bool32 applied = Set(state, priority);
         if (applied)
@@ -99,7 +103,8 @@ template <typename T> struct StateMachine {
         return applied;
     }
 
-    template <typename E> inline bool32 QueueForTime(void (E::*state)(), uint32 duration, uint8 priority = PRIORITY_NONE)
+    template <typename E>
+    inline bool32 QueueForTime(void (E::*state)(), uint32 duration, uint8 priority = PRIORITY_NONE)
     {
         if (priority < this->priority || this->priority == PRIORITY_LOCKED)
             return false;
@@ -147,7 +152,17 @@ template <typename T> struct StateMachine {
     }
 
     inline bool32 Matches(void (T::*other)()) { return state == other; }
-    template <typename E> inline bool32 Matches(void (E::*other)()) { return state == (void(T::*)())other; }
+
+    template <typename E>
+    inline bool32 Matches(void (E::*other)())
+    {
+        union {
+            void (E::*in)();
+            void (T::*out)();
+        } u;
+        u.in = other;
+        return state == u.out;
+    }
 
     inline void Copy(StateMachine<T> *other)
     {
@@ -159,7 +174,8 @@ template <typename T> struct StateMachine {
         this->priority = other->priority;
     }
 
-    template <typename E> inline void Copy(StateMachine<T> *other)
+    template <typename E>
+    inline void Copy(StateMachine<T> *other)
     {
         // converts from E:: -> T:: without the compiler interfering :]
         union {

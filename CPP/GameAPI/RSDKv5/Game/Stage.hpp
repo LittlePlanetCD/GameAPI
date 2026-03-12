@@ -38,9 +38,10 @@ struct SceneListEntry {
     uint32 hash[4];
     char name[0x20];
     char folder[0x10];
-    char id[0x08];
+    char id[0x04];
 #if RETRO_REV02
     uint8 filter;
+    uint8 padding[3];
 #endif
 };
 

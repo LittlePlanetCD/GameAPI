@@ -6,8 +6,8 @@ namespace RSDK
 {
 
 struct Matrix {
-    Matrix() {}
-    Matrix(Matrix &other) { Matrix::Copy(this, &other); }
+    inline Matrix() : values() {}
+    inline Matrix(Matrix &other) { Matrix::Copy(this, &other); }
 
     int32 values[4][4];
 

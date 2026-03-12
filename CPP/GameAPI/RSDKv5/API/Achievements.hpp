@@ -3,9 +3,10 @@
 #include "../Types.hpp"
 #include "../EngineAPI.hpp"
 
-#if RETRO_REV02
 namespace RSDK
 {
+
+#if RETRO_REV02
 
 struct AchievementID {
     uint8 idPS4;     // achievement ID (PS4)
@@ -28,6 +29,7 @@ inline void SetNames(String **names, int32 count) { APITable->SetAchievementName
 
 } // namespace Achievements
 
+#endif
+
 } // namespace API
 } // namespace RSDK
-#endif

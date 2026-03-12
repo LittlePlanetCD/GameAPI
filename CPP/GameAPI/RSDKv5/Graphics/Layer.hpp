@@ -125,6 +125,12 @@ struct SceneLayer {
     {
         RSDKTable->CopyTileLayer(dstLayer.id, dstStartX, dstStartY, srcLayer.id, srcStartX, srcStartY, countX, countY);
     }
+
+    static inline void Copy(uint16 dstLayer, int32 dstStartX, int32 dstStartY, uint16 srcLayer, int32 srcStartX, int32 srcStartY, int32 countX,
+                            int32 countY)
+    {
+        RSDKTable->CopyTileLayer(dstLayer, dstStartX, dstStartY, srcLayer, srcStartX, srcStartY, countX, countY);
+    }
 };
 
 namespace Stage
