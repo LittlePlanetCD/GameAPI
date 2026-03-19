@@ -686,7 +686,9 @@ struct S3GlobalVariables {
     uint8 bossAttackRestartPowerup;
     uint8 bossAttackClearType;
     bool32 hasBossAttackRestartState;
+#if ORIGINS_USE_PLUS
     bool32 hasPlusDLC;
+#endif
     bool32 playMode;
     int32 callbackParam0;
     int32 callbackParam1;
