@@ -154,7 +154,11 @@ enum ManiaReservedEntities {
     SLOT_PBL_CAMERA  = 10,
     SLOT_BSS_MESSAGE = 11,
     SLOT_UFO_HUD     = 11,
-    SLOT_ZONE        = MANIA_USE_PLUS ? 12 : 8,
+#if MANIA_USE_PLUS || GAME_IS_S3
+    SLOT_ZONE = 12,
+#else
+    SLOT_ZONE = 8,
+#endif
     // 13 = ???
     // 14 = ???
     SLOT_CUTSCENESEQ         = 15,
