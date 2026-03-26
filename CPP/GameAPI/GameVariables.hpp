@@ -400,12 +400,12 @@ enum NotifyCallbackIDs {
     NOTIFY_STATS_SAVE_FUTURE   = 0xA4,
     NOTIFY_STATS_CHARA_ACTION2 = 0xA5,
 
-    NOTIFY_DELETE_SAVE_SLOT    = 1001,
-    NOTIFY_SELECT_SAVE_SLOT    = 1002,
-    NOTIFY_PLAYER_SAVED_VALUES = 1003,
-    NOTIFY_1004                = 1004, // sets globals->useHiteRestartStage to callback param1 for S3K, doesnt seem used
-    NOTIFY_START_STAGE         = 1005,
-    NOTIFY_DISPLAY_TITLECARD   = 1006,
+    NOTIFY_DELETE_SAVE_SLOT       = 1001,
+    NOTIFY_SELECT_SAVE_SLOT       = 1002,
+    NOTIFY_PLAYER_SAVED_VALUES    = 1003,
+    NOTIFY_STAGE_RESTART_OVERRIDE = 1004,
+    NOTIFY_START_STAGE            = 1005,
+    NOTIFY_DISPLAY_TITLECARD      = 1006,
 #if ORIGINS_USE_PLUS
     NOTIFY_DISPLAY_PLUS_DLC_ERROR = 1007,
 #endif
@@ -667,8 +667,8 @@ struct S3GlobalVariables {
     bool32 blueSpheresHasPerfect;
     int32 blueSpheresLevel;
     int32 blueSpheresProgress;
-    int32 nextBlueSpheresLevel;
-    bool32 disableBlueSpheresAdvancement;
+    int32 blueSpheresNextLevel;
+    bool32 blueSpheresDisableAdvancement;
     bool32 blueSpheresAdvancementStore;
     uint8 blueSpheresUnlockFlag;
     bool32 gameStarted;
@@ -722,10 +722,10 @@ struct S3GlobalVariables {
     int32 statsParam7;
     int32 statsParam8;
     int32 statsParam2;
-    bool32 unknown1;
-    int32 unknown2;
-    bool32 waitSSRetry;
-    bool32 unknown3;
+    int32 unused1;
+    int32 unused2;
+    bool32 retryWait;
+    bool32 unused3;
     bool32 cheatEmeralds;
 #if GAME_VERSION >= VER_104
     bool32 stageSelectLRZB;
