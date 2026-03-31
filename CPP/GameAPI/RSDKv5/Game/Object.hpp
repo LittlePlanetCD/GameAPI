@@ -268,101 +268,27 @@ struct GameObject {
     static inline void Reset(int32 slot, uint32 type, void *data) { RSDKTable->ResetEntitySlot(slot, type, data); }
     static inline void Reset(int32 slot, uint32 type, int32 data) { RSDKTable->ResetEntitySlot(slot, type, INT_TO_VOID(data)); }
 
-#if 0
-    template <typename T> static inline std::list<T *> GetEntities(ForeachTypes type)
-    {
-        std::list<T *> list;
-
-        uint16 group = T::sVars ? T::sVars->classID : GROUP_ALL;
-
-        T *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-
-        return list;
-    }
-
-    template <typename T> static inline std::list<T *> GetEntities(ForeachTypes type, uint16 group)
-    {
-        std::list<T *> list;
-
-        T *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-#if RETRO_USE_MOD_LOADER && RETRO_MOD_LOADER_VER >= 2
-        else if (type == FOR_GROUP_ENTITIES) {
-            while (modTable->GetGroupEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-#endif
-
-        return list;
-    }
-
-    static inline std::list<Entity *> GetEntities(ForeachTypes type)
-    {
-        std::list<Entity *> list;
-
-        Entity *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(GROUP_ALL, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(GROUP_ALL, (void **)&entity)) list.push_back(entity);
-        }
-#if RETRO_USE_MOD_LOADER && RETRO_MOD_LOADER_VER >= 2
-        else if (type == FOR_GROUP_ENTITIES) {
-            while (modTable->GetGroupEntities(GROUP_ALL, (void **)&entity)) list.push_back(entity);
-        }
-#endif
-
-        return list;
-    }
-
-    static inline std::list<Entity *> GetEntities(ForeachTypes type, uint16 group)
-    {
-        std::list<Entity *> list;
-
-        Entity *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-
-        return list;
-    }
-#endif
-
     template <typename T> struct EntityIterator {
         T *entity;
         uint16 group;
         int32 type;
 
         inline T *operator*() { return entity; }
+
         inline bool operator!=(const EntityIterator &)
         {
-            if (type == FOR_ALL_ENTITIES)
-                return RSDKTable->GetAllEntities(group, (void **)&entity);
-
-            if (type == FOR_ACTIVE_ENTITIES)
-                return RSDKTable->GetActiveEntities(group, (void **)&entity);
-
+            switch (type) {
+                case FOR_ALL_ENTITIES: return RSDKTable->GetAllEntities(group, (void **)&entity);
+                case FOR_ACTIVE_ENTITIES: return RSDKTable->GetActiveEntities(group, (void **)&entity);
 #if RETRO_USE_MOD_LOADER && RETRO_MOD_LOADER_VER >= 2
-            if (type == FOR_GROUP_ENTITIES)
-                return modTable->GetGroupEntities(group, (void **)&entity);
+                case FOR_GROUP_ENTITIES: return modTable->GetGroupEntities(group, (void **)&entity);
 #endif
+                default: break;
+            }
 
             return false;
         }
+
         inline void operator++() const {}
     };
 
@@ -374,11 +300,7 @@ struct GameObject {
         inline EntityIterator<T> end() { return { nullptr, group, type }; }
     };
 
-    template <typename T> static inline EntityList<T> GetEntities(int32 type)
-    {
-        return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type };
-    }
-
+    template <typename T> static inline EntityList<T> GetEntities(int32 type) { return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type }; }
     template <typename T> static inline EntityList<T> GetEntities(int32 type, uint16 group) { return { group, type }; }
 
     static inline EntityList<Entity> GetEntities(int32 type) { return { (uint16)GROUP_ALL, type }; }
