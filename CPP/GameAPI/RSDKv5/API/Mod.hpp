@@ -212,6 +212,60 @@ inline void *GetChannel(uint8 id) { return modTable->GetChannel(id); }
 } // namespace Engine
 #endif
 
+template <typename> struct func_get_object_type;
+template <typename T, typename returning, typename... args> struct func_get_object_type<returning (T::*)(args...)> {
+    using type = T;
+};
+
+template <auto hook, typename T> void RegisterStateHook(void (T::*state)(), bool32 priority)
+{
+    union {
+        void (T::*in)();
+        void (*out)();
+    } u;
+    u.in = state;
+
+    if constexpr (std::is_member_function_pointer_v<decltype(hook)>) {
+        static constexpr bool32 (*_hook)(bool32) = [](bool32 skippedState) -> bool32 {
+            return (reinterpret_cast<T *>(sceneInfo->entity)->*hook)(skippedState);
+        };
+        modTable->RegisterStateHook(u.out, _hook, priority);
+    }
+    else {
+        modTable->RegisterStateHook(u.out, hook, priority);
+    }
+}
+
+template <auto hook> void RegisterStateHook(void (*state)(), bool32 priority)
+{
+    if constexpr (std::is_member_function_pointer_v<decltype(hook)>) {
+        using T = typename func_get_object_type<decltype(hook)>::type;
+
+        static constexpr bool32 (*_hook)(bool32) = [](bool32 skippedState) -> bool32 {
+            return (reinterpret_cast<T *>(sceneInfo->entity)->*hook)(skippedState);
+        };
+
+        modTable->RegisterStateHook(state, _hook, priority);
+    }
+    else {
+        modTable->RegisterStateHook(state, hook, priority);
+    }
+}
+
+template <auto hook, typename T> void RegisterStateHook(void (*state)(T *self), bool32 priority)
+{
+    if constexpr (std::is_member_function_pointer_v<decltype(hook)>) {
+        static constexpr bool32 (*_hook)(bool32) = [](bool32 skippedState) -> bool32 {
+            return (reinterpret_cast<T *>(sceneInfo->entity)->*hook)(skippedState);
+        };
+
+        modTable->RegisterStateHook(reinterpret_cast<void (*)()>(state), _hook, priority);
+    }
+    else {
+        modTable->RegisterStateHook(reinterpret_cast<void (*)()>(state), hook, priority);
+    }
+}
+
 inline void RegisterStateHook(void (*state)(), bool32 (*hook)(bool32 skippedState), bool32 priority)
 {
     modTable->RegisterStateHook(state, hook, priority);
