@@ -5,6 +5,7 @@
 
 #if RETRO_USE_MOD_LOADER
 #include <functional>
+#include <type_traits>
 
 namespace RSDK
 {
@@ -79,7 +80,20 @@ struct FunctionObject {
     const char *id;
     const char *functionName;
 
-    template <typename T> inline operator T() const { return reinterpret_cast<T>(modTable->GetPublicFunction(id, functionName)); }
+    template <typename T> inline operator T() const
+    {
+        if constexpr (std::is_member_function_pointer_v<T>) {
+            union {
+                void *in;
+                T out;
+            } u;
+            u.in = modTable->GetPublicFunction(id, functionName);
+            return u.out;
+        }
+        else {
+            return reinterpret_cast<T>(modTable->GetPublicFunction(id, functionName));
+        }
+    }
 };
 
 template <typename obj, typename R> inline void Add(const char *functionName, R(obj::*functionPtr))
