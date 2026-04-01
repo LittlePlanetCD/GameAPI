@@ -2,6 +2,7 @@
 
 #include "../Types.hpp"
 #include "Object.hpp"
+#include <cstddef>
 
 #if __clang__
 #pragma clang diagnostic ignored "-Wmicrosoft-cast"
@@ -10,7 +11,7 @@
 namespace RSDK
 {
 #define SET_CURRENT_STATE() RSDK::currentState = __func__
-#define StateMachine_None nullptr
+#define StateMachine_None   nullptr
 
 extern const char *currentState;
 
@@ -114,7 +115,70 @@ template <typename T> struct StateMachine {
         this->state    = u.out;
         this->timer    = duration;
         this->priority = priority;
+        return true;
+    }
 
+    inline bool32 Set(void (*state)(), uint8 priority = PRIORITY_NONE)
+    {
+        if (priority < this->priority || this->priority == PRIORITY_LOCKED)
+            return false;
+
+        union {
+            void (*in)();
+            void (T::*out)();
+        } u;
+        u.in = state;
+
+        this->state    = u.out;
+        this->timer    = 0;
+        this->priority = priority;
+        return true;
+    }
+
+    inline bool32 SetAndRun(void (*state)(), GameObject::Entity *self, uint8 priority = PRIORITY_NONE)
+    {
+        bool32 applied = Set(state, priority);
+        if (applied)
+            Run(self);
+        return applied;
+    }
+
+    inline bool32 QueueForTime(void (*state)(), uint32 duration, uint8 priority = PRIORITY_NONE)
+    {
+        if (priority < this->priority || this->priority == PRIORITY_LOCKED)
+            return false;
+
+        union {
+            void (*in)();
+            void (T::*out)();
+        } u;
+        u.in = state;
+
+        this->state    = u.out;
+        this->timer    = duration;
+        this->priority = priority;
+        return true;
+    }
+
+    inline bool32 Set(std::nullptr_t, uint8 priority = PRIORITY_NONE)
+    {
+        if (priority < this->priority || this->priority == PRIORITY_LOCKED)
+            return false;
+
+        this->state    = nullptr;
+        this->timer    = 0;
+        this->priority = priority;
+        return true;
+    }
+
+    inline bool32 QueueForTime(std::nullptr_t, uint32 duration, uint8 priority = PRIORITY_NONE)
+    {
+        if (priority < this->priority || this->priority == PRIORITY_LOCKED)
+            return false;
+
+        this->state    = nullptr;
+        this->timer    = duration;
+        this->priority = priority;
         return true;
     }
 
@@ -147,7 +211,20 @@ template <typename T> struct StateMachine {
     }
 
     inline bool32 Matches(void (T::*other)()) { return state == other; }
-    template <typename E> inline bool32 Matches(void (E::*other)()) { return state == (void(T::*)())other; }
+
+    template <typename E> inline bool32 Matches(void (E::*other)()) { return state == (void (T::*)())other; }
+
+    inline bool32 Matches(void (*other)())
+    {
+        union {
+            void (*in)();
+            void (T::*out)();
+        } u;
+        u.in = other;
+        return state == u.out;
+    }
+
+    inline bool32 Matches(std::nullptr_t) { return state == nullptr; }
 
     inline void Copy(StateMachine<T> *other)
     {
