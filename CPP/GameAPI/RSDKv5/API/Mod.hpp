@@ -72,8 +72,35 @@ namespace Mod
 // Mod Callbacks & Public Functions
 inline void AddModCallback(int32 callbackID, void (*callback)(void *)) { modTable->AddModCallback(callbackID, callback); }
 inline void AddModCallback(int32 callbackID, std::function<void(void *)> callback) { modTable->AddModCallback_STD(callbackID, callback); }
-inline void AddPublicFunction(const char *functionName, void *functionPtr) { modTable->AddPublicFunction(functionName, functionPtr); }
-inline void *GetPublicFunction(const char *id, const char *functionName) { return modTable->GetPublicFunction(id, functionName); }
+
+namespace PublicFunctions
+{
+struct FunctionObject {
+    const char *id;
+    const char *functionName;
+
+    template <typename T> inline operator T() const { return reinterpret_cast<T>(modTable->GetPublicFunction(id, functionName)); }
+};
+
+template <typename obj, typename R> inline void Add(const char *functionName, R(obj::*functionPtr))
+{
+    modTable->AddPublicFunction(functionName, reinterpret_cast<void *&>(functionPtr));
+}
+
+template <typename R> inline void Add(const char *functionName, R(*functionPtr))
+{
+    modTable->AddPublicFunction(functionName, reinterpret_cast<void *&>(functionPtr));
+}
+
+inline FunctionObject Get(const char *id, const char *functionName) { return { id, functionName }; }
+
+#if RETRO_MOD_LOADER_VER >= 3
+inline void Hook(const char *id, const char *functionName, void *functionPtr, void **originalPtr)
+{
+    modTable->HookPublicFunction(id, functionName, functionPtr, originalPtr);
+}
+#endif
+} // namespace PublicFunctions
 
 // Shaders
 inline void LoadShader(const char *shaderName, bool32 linear) { modTable->LoadShader(shaderName, linear); }
@@ -133,7 +160,6 @@ inline bool32 GetBool(const char *key, bool32 fallback) { return modTable->GetCo
 inline int32 GetInteger(const char *key, int32 fallback) { return modTable->GetConfigInteger(key, fallback); }
 inline float GetFloat(const char *key, float fallback) { return modTable->GetConfigFloat(key, fallback); }
 inline void GetString(const char *key, String *result, const char *fallback) { modTable->GetConfigString(key, result, fallback); }
-
 } // namespace Config
 
 #if RETRO_MOD_LOADER_VER >= 2
@@ -169,7 +195,6 @@ inline void *GetModel(uint16 id) { return modTable->GetModel(id); }
 inline void *GetScene3D(uint16 id) { return modTable->GetScene3D(id); }
 inline void *GetSfx(uint16 id) { return modTable->GetSfx(id); }
 inline void *GetChannel(uint8 id) { return modTable->GetChannel(id); }
-
 } // namespace Engine
 #endif
 
@@ -181,18 +206,13 @@ inline void RegisterStateHook(void (*state)(), bool32 (*hook)(bool32 skippedStat
 extern const char *modID;
 
 #if RETRO_MOD_LOADER_VER >= 3
-inline void HookPublicFunction(const char *id, const char *functionName, void *functionPtr, void **originalPtr)
-{
-    modTable->HookPublicFunction(id, functionName, functionPtr, originalPtr);
-}
-
 // FIXME: Find a more C++ way of handling it, struct/namespace?
 
 // Generic hook
 #define DEFINE_PUBLIC_HOOK_FUNC(modID, name, returnType, ...)                                                                                        \
     static returnType (*Original_##name)(__VA_ARGS__);                                                                                               \
     static returnType Hook_##name(__VA_ARGS__);                                                                                                      \
-    static void RegisterHook_##name(void) { HookPublicFunction(modID, #name, Hook_##name, (void **)&Original_##name); }                              \
+    static void RegisterHook_##name(void) { Mod::PublicFunctions::Hook(modID, #name, Hook_##name, (void **)&Original_##name); }                      \
     static returnType Hook_##name(__VA_ARGS__)
 
 // Hook into the current game's public functions
