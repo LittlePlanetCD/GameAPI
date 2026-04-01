@@ -47,10 +47,10 @@ enum ModSuper {
 
 #if RETRO_MOD_LOADER_VER >= 3
 enum RetroPlatform {
-    RETRO_WIN     = 0,
-    RETRO_PS4     = 1,
-    RETRO_XB1     = 2,
-    RETRO_SWITCH  = 3,
+    RETRO_WIN    = 0,
+    RETRO_PS4    = 1,
+    RETRO_XB1    = 2,
+    RETRO_SWITCH = 3,
     // CUSTOM
     RETRO_OSX     = 4,
     RETRO_LINUX   = 5,
@@ -79,7 +79,7 @@ inline void *GetPublicFunction(const char *id, const char *functionName) { retur
 inline void LoadShader(const char *shaderName, bool32 linear) { modTable->LoadShader(shaderName, linear); }
 
 // Misc
-inline void *GetGlobals() { return modTable->GetGlobals(); }
+template <typename T> inline T *GetGlobals() { return (T *)modTable->GetGlobals(); }
 
 #if RETRO_MOD_LOADER_VER >= 3
 inline void OpenModMenu() { modTable->OpenModMenu(); }
@@ -189,12 +189,10 @@ inline void HookPublicFunction(const char *id, const char *functionName, void *f
 // FIXME: Find a more C++ way of handling it, struct/namespace?
 
 // Generic hook
-#define DEFINE_PUBLIC_HOOK_FUNC(modID, name, returnType, ...)                        \
-    static returnType (*Original_##name)(__VA_ARGS__);                               \
-    static returnType Hook_##name(__VA_ARGS__);                                      \
-    static void RegisterHook_##name(void) {                                          \
-        HookPublicFunction(modID, #name, Hook_##name, (void**)&Original_##name);     \
-    }                                                                                \
+#define DEFINE_PUBLIC_HOOK_FUNC(modID, name, returnType, ...)                                                                                        \
+    static returnType (*Original_##name)(__VA_ARGS__);                                                                                               \
+    static returnType Hook_##name(__VA_ARGS__);                                                                                                      \
+    static void RegisterHook_##name(void) { HookPublicFunction(modID, #name, Hook_##name, (void **)&Original_##name); }                              \
     static returnType Hook_##name(__VA_ARGS__)
 
 // Hook into the current game's public functions
@@ -204,7 +202,10 @@ inline void HookPublicFunction(const char *id, const char *functionName, void *f
 #define DEFINE_MOD_HOOK_FUNC(modID, name, returnType, ...) DEFINE_PUBLIC_HOOK_FUNC(modID, name, returnType, __VA_ARGS__)
 
 // Register a defined hook of the same name
-#define REGISTER_HOOK_FUNC(name) do { RegisterHook_##name(); } while (0)
+#define REGISTER_HOOK_FUNC(name)                                                                                                                     \
+    do {                                                                                                                                             \
+        RegisterHook_##name();                                                                                                                       \
+    } while (0)
 #endif
 
 } // namespace Mod
