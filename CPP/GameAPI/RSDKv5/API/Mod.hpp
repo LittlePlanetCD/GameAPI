@@ -252,20 +252,6 @@ template <auto hook> void RegisterStateHook(void (*state)(), bool32 priority)
     }
 }
 
-template <auto hook, typename T> void RegisterStateHook(void (*state)(T *self), bool32 priority)
-{
-    if constexpr (std::is_member_function_pointer_v<decltype(hook)>) {
-        static constexpr bool32 (*_hook)(bool32) = [](bool32 skippedState) -> bool32 {
-            return (reinterpret_cast<T *>(sceneInfo->entity)->*hook)(skippedState);
-        };
-
-        modTable->RegisterStateHook(reinterpret_cast<void (*)()>(state), _hook, priority);
-    }
-    else {
-        modTable->RegisterStateHook(reinterpret_cast<void (*)()>(state), hook, priority);
-    }
-}
-
 inline void RegisterStateHook(void (*state)(), bool32 (*hook)(bool32 skippedState), bool32 priority)
 {
     modTable->RegisterStateHook(state, hook, priority);
