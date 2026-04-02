@@ -2,6 +2,8 @@
 
 #include "../Types.hpp"
 #include "../EngineAPI.hpp"
+#include "../Game/Object.hpp"
+#include "../Game/Stage.hpp"
 
 #if RETRO_USE_MOD_LOADER
 #include <functional>
@@ -96,47 +98,6 @@ struct FunctionObject {
     }
 };
 
-#if RETRO_MOD_LOADER_VER >= 3
-template <typename Derived> class HookContainer
-{
-public:
-    constexpr HookContainer(const char *name)
-    {
-        this->modID__ = nullptr;
-        this->name__  = name;
-    }
-
-    constexpr HookContainer(const char *modID, const char *name)
-    {
-        this->modID__ = modID;
-        this->name__  = name;
-    }
-
-    static void Register() { Derived().Internal_Register(); }
-
-    template <typename... Args> static decltype(auto) Original(Args &&...args) { return Internal_Original()(std::forward<Args>(args)...); }
-
-protected:
-    const char *modID__;
-    const char *name__;
-
-    void Internal_Register()
-    {
-        auto &original = Internal_Original();
-
-        Hook(this->modID__, this->name__, reinterpret_cast<void *>(&Derived::Implementation), reinterpret_cast<void **>(&original));
-    }
-
-    static auto &Internal_Original()
-    {
-        using T = decltype(&Derived::Implementation);
-
-        static typename function_info<T>::signature *original = nullptr;
-        return original;
-    }
-};
-#endif
-
 template <typename obj, typename R> inline void Add(const char *functionName, R(obj::*functionPtr))
 {
     modTable->AddPublicFunction(functionName, reinterpret_cast<void *&>(functionPtr));
@@ -154,6 +115,41 @@ inline void Hook(const char *id, const char *functionName, void *functionPtr, vo
 {
     modTable->HookPublicFunction(id, functionName, functionPtr, originalPtr);
 }
+
+template <typename Derived> class HookContainer
+{
+public:
+    constexpr HookContainer(const char *name)
+    {
+        this->modID__ = nullptr;
+        this->name__  = name;
+    }
+
+    constexpr HookContainer(const char *modID, const char *name)
+    {
+        this->modID__ = modID;
+        this->name__  = name;
+    }
+
+    static void Register()
+    {
+        Derived instance = {};
+        PublicFunctions::Hook(instance.modID__, instance.name__, reinterpret_cast<void *>(&Derived::Implementation), reinterpret_cast<void **>(&instance.original__));
+    }
+
+    template <typename... Args> static decltype(auto) Original(Args &&...args)
+    {
+        using T = decltype(&std::remove_reference_t<Derived>::Implementation);
+
+        T _original = reinterpret_cast<T>(original__);
+        return _original(std::forward<Args>(args)...);
+    }
+
+protected:
+    const char *modID__;
+    const char *name__;
+    inline static void *original__ = nullptr;
+};
 #endif
 } // namespace PublicFunctions
 
@@ -254,13 +250,13 @@ inline void *GetChannel(uint8 id) { return modTable->GetChannel(id); }
 #endif
 
 template <typename> struct function_info;
-template <typename T, typename Returning, typename... Args> struct function_info<Returning (T::*)(Args...)> {
+template <typename T, typename returning, typename... Args> struct function_info<returning (T::*)(Args...)> {
     using object_type = T;
-    using signature   = Returning(Args...);
+    using signature   = returning(Args...);
 };
 
-template <typename Returning, typename... Args> struct function_info<Returning (*)(Args...)> {
-    using signature = Returning(Args...);
+template <typename returning, typename... Args> struct function_info<returning (*)(Args...)> {
+    using signature = returning(Args...);
 };
 
 template <auto hook, typename T> void RegisterStateHook(void (T::*state)(), bool32 priority)
@@ -271,31 +267,20 @@ template <auto hook, typename T> void RegisterStateHook(void (T::*state)(), bool
     } u;
     u.in = state;
 
-    if constexpr (std::is_member_function_pointer_v<decltype(hook)>) {
-        static constexpr bool32 (*_hook)(bool32) = [](bool32 skippedState) -> bool32 {
-            return (reinterpret_cast<T *>(sceneInfo->entity)->*hook)(skippedState);
-        };
-        modTable->RegisterStateHook(u.out, _hook, priority);
-    }
-    else {
+    if constexpr (std::is_member_function_pointer_v<decltype(hook)>)
+        modTable->RegisterStateHook(u.out, +[](bool32 skippedState) -> bool32 { return ((T *)sceneInfo->entity->*hook)(skippedState); }, priority);
+    else
         modTable->RegisterStateHook(u.out, hook, priority);
-    }
 }
 
 template <auto hook> void RegisterStateHook(void (*state)(), bool32 priority)
 {
-    if constexpr (std::is_member_function_pointer_v<decltype(hook)>) {
-        using T = typename function_info<decltype(hook)>::object_type;
+    using T = typename function_info<decltype(hook)>::object_type;
 
-        static constexpr bool32 (*_hook)(bool32) = [](bool32 skippedState) -> bool32 {
-            return (reinterpret_cast<T *>(sceneInfo->entity)->*hook)(skippedState);
-        };
-
-        modTable->RegisterStateHook(state, _hook, priority);
-    }
-    else {
+    if constexpr (std::is_member_function_pointer_v<decltype(hook)>)
+        modTable->RegisterStateHook(state, +[](bool32 skippedState) -> bool32 { return ((T *)sceneInfo->entity->*hook)(skippedState); }, priority);
+    else
         modTable->RegisterStateHook(state, hook, priority);
-    }
 }
 
 inline void RegisterStateHook(void (*state)(), bool32 (*hook)(bool32 skippedState), bool32 priority)
@@ -308,5 +293,27 @@ extern const char *modID;
 } // namespace Mod
 
 } // namespace RSDK
+
+#if RETRO_MOD_LOADER_VER >= 3
+// Declare a generic hook
+#define DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, ...)                                                                                 \
+    struct type : Mod::PublicFunctions::HookContainer<type> {                                                                                        \
+        type() : HookContainer(modID, name) {}                                                                                                       \
+        static returnType Implementation(__VA_ARGS__);                                                                                               \
+    };
+
+// Declare a generic hook, hook into the current game's public functions
+#define DECLARE_GAME_HOOK_FUNC(name, type, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(nullptr, name, type, returnType, __VA_ARGS__)
+
+// Declare a generic hook, hook into other mods' public functions by ID
+#define DECLARE_MOD_HOOK_FUNC(modID, name, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, __VA_ARGS__)
+
+// Define a generic hook
+#define DEFINE_PUBLIC_HOOK_FUNC(name, returnType, ...) returnType name::Implementation(__VA_ARGS__)
+
+// Register a defined hook of the same name
+#define REGISTER_HOOK_FUNC(name) name::Register();
+
+#endif // !RETRO_MOD_LOADER_VER
 
 #endif
