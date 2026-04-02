@@ -252,11 +252,6 @@ inline void *GetChannel(uint8 id) { return modTable->GetChannel(id); }
 template <typename> struct function_info;
 template <typename T, typename returning, typename... Args> struct function_info<returning (T::*)(Args...)> {
     using object_type = T;
-    using signature   = returning(Args...);
-};
-
-template <typename returning, typename... Args> struct function_info<returning (*)(Args...)> {
-    using signature = returning(Args...);
 };
 
 template <auto hook, typename T> void RegisterStateHook(void (T::*state)(), bool32 priority)
