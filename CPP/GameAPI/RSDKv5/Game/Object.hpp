@@ -309,7 +309,7 @@ struct GameObject {
     static inline uint16 Find(const char *name) { return RSDKTable->FindObject(name); }
 
 #if RETRO_USE_MOD_LOADER
-    static inline void *FindClass(const char *name) { return modTable->FindObject(name); }
+    template <typename T> static inline T *FindClass(const char *name) { return (T *)modTable->FindObject(name); }
 #endif
 
 #if GAME_INCLUDE_EDITOR
@@ -393,7 +393,7 @@ template <typename E> static inline typename E::Static *RegisterObject(typename 
 #endif
 
 #if RETRO_REV0U
-        if (((void (**)(void *)) & E::StaticLoad) != ((void (**)(void *)) & GameObject::Entity::StaticLoad))
+        if (((void (**)(void *))&E::StaticLoad) != ((void (**)(void *))&GameObject::Entity::StaticLoad))
             object->staticLoad = (void (*)(void *))E::StaticLoad;
 #endif
 
@@ -521,7 +521,7 @@ static inline typename E::Static *RegisterObject(typename E::Static **sVars, typ
 #endif
 
 #if RETRO_REV0U
-        if (((void (**)(void *)) & E::StaticLoad) != ((void (**)(void *)) & GameObject::Entity::StaticLoad))
+        if (((void (**)(void *))&E::StaticLoad) != ((void (**)(void *))&GameObject::Entity::StaticLoad))
             object->staticLoad = (void (*)(void *))E::StaticLoad;
 #endif
 
