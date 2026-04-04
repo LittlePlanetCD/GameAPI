@@ -10,7 +10,7 @@ namespace RSDK
 struct Channel {
 
     Channel() : id(0) {}
-    Channel(uint8 channelID) : id(channelID) {}
+    Channel(int32 channelID) : id(channelID) {}
 
     inline void SetAttributes(float volume, float pan, float speed) { RSDKTable->SetChannelAttributes(id, volume, pan, speed); }
 
@@ -30,7 +30,7 @@ struct Channel {
         return RSDKTable->PlayStream(filename, id, startPos, loopPoint, loadASync);
     }
 
-    uint8 id;
+    int32 id;
 };
 
 extern RSDK::Channel channels[CHANNEL_COUNT];
