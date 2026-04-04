@@ -5,84 +5,6 @@
 // GAME ENUMS
 // =========================
 
-#ifndef GAME_NO_VARIABLES
-
-#if GAME_IS_MANIA || GAME_IS_S3
-typedef enum {
-#if !MANIA_USE_PLUS && !GAME_IS_S3
-    MODE_NOSAVE,
-#endif
-    MODE_MANIA, // officially called "MODE_SAVEGAME" in pre-plus, but it's easier to re-use names lol
-#if MANIA_USE_PLUS || GAME_IS_S3
-    MODE_ENCORE,
-#endif
-    MODE_TIMEATTACK,
-    MODE_COMPETITION,
-} ManiaGameModes;
-
-typedef enum {
-    ID_NONE     = 0 << 0,
-    ID_SONIC    = 1 << 0,
-    ID_TAILS    = 1 << 1,
-    ID_KNUCKLES = 1 << 2,
-#if (GAME_IS_MANIA && MANIA_USE_PLUS) || (GAME_IS_S3 && !ORIGINS_USE_PLUS)
-    ID_MIGHTY = 1 << 3,
-    ID_RAY    = 1 << 4,
-#endif
-#if GAME_IS_S3 && ORIGINS_USE_PLUS
-    ID_AMY    = 1 << 3,
-    ID_MIGHTY = 1 << 4,
-    ID_RAY    = 1 << 5,
-#endif
-    ID_TAILS_ASSIST    = ID_TAILS << 8,
-    ID_KNUCKLES_ASSIST = ID_KNUCKLES << 8, // custom-added, can be used to check if "& knux" is active
-    ID_DEFAULT_PLAYER  = ID_SONIC | ID_TAILS_ASSIST,
-#if GAME_IS_S3 && ORIGINS_USE_PLUS
-    ID_AMY_TAILS = ID_AMY | ID_TAILS_ASSIST,
-#endif
-} ManiaPlayerIDs;
-
-#define GET_CHARACTER_ID(playerNum)                (((globals->playerID >> (8 * ((playerNum)-1))) & 0xFF))
-#define CHECK_CHARACTER_ID(characterID, playerNum) (((globals->playerID >> (8 * ((playerNum)-1))) & 0xFF) == (characterID))
-
-#if MANIA_USE_PLUS || GAME_IS_S3
-#define GET_STOCK_ID(stockNum)                (((globals->stock >> (8 * ((stockNum)-1))) & 0xFF))
-#define CHECK_STOCK_ID(characterID, stockNum) (((globals->stock >> (8 * ((stockNum)-1))) & 0xFF) == (characterID))
-#endif
-
-typedef enum { ITEMS_FIXED, ITEMS_RANDOM, ITEMS_TELEPORT } ManiaItemModes;
-#endif
-
-#if GAME_IS_MANIA
-typedef enum {
-    MEDAL_DEBUGMODE   = 1 << 0,
-    MEDAL_ANDKNUCKLES = 1 << 1,
-    MEDAL_PEELOUT     = 1 << 2,
-    MEDAL_INSTASHIELD = 1 << 3,
-    MEDAL_NODROPDASH  = 1 << 4,
-#if MANIA_USE_PLUS
-    MEDAL_NOTIMEOVER = 1 << 5,
-#endif
-} ManiaMedalMods;
-
-typedef enum { MEDIA_DEMO } ManiaCategoryIDS;
-
-typedef enum { FORCE_SPLIT } ManiaScreenSplit;
-
-typedef enum { NO_SAVE_SLOT = 255 } ManiaSaveSlots;
-
-typedef enum {
-    PLANEFILTER_NONE,
-    PLANEFILTER_AL, // - Plane A, Low Layer
-    PLANEFILTER_BL, // - Plane B, Low Layer
-    PLANEFILTER_AH, // - Plane A, High Layer
-    PLANEFILTER_BH, // - Plane B, High Layer
-} ManiaPlaneFilterTypes;
-#endif
-#endif
-
-typedef enum { WIDE_SCR_XSIZE = 424, WIDE_SCR_XCENTER = 212 } ScreenSizes;
-
 #if RETRO_REV02
 typedef enum {
     // General Filters
@@ -100,10 +22,30 @@ typedef enum {
 #endif
 
 #ifndef GAME_NO_VARIABLES
+#if GAME_IS_MANIA || GAME_IS_S3
+#define GET_CHARACTER_ID(playerNum)                (((globals->playerID >> (8 * ((playerNum) - 1))) & 0xFF))
+#define CHECK_CHARACTER_ID(characterID, playerNum) (((globals->playerID >> (8 * ((playerNum) - 1))) & 0xFF) == (characterID))
 
-#if GAME_IS_MANIA
+#if MANIA_USE_PLUS || GAME_IS_S3
+#define GET_STOCK_ID(stockNum)                (((globals->stock >> (8 * ((stockNum) - 1))) & 0xFF))
+#define CHECK_STOCK_ID(characterID, stockNum) (((globals->stock >> (8 * ((stockNum) - 1))) & 0xFF) == (characterID))
+#endif //! MANIA_USE_PLUS || GAME_IS_S3
 
-#if MANIA_USE_PLUS
+typedef enum {
+    ITEMS_FIXED,
+    ITEMS_RANDOM,
+    ITEMS_TELEPORT,
+} ManiaItemModes;
+
+typedef enum {
+    PLANEFILTER_NONE,
+    PLANEFILTER_AL, // - Plane A, Low Layer
+    PLANEFILTER_BL, // - Plane B, Low Layer
+    PLANEFILTER_AH, // - Plane A, High Layer
+    PLANEFILTER_BH, // - Plane B, High Layer
+} ManiaPlaneFilterTypes;
+
+#if MANIA_USE_PLUS || GAME_IS_S3
 typedef enum {
     // Mania-Specific filter uses
     FILTER_BOTH   = FILTER_SLOT1,
@@ -112,7 +54,42 @@ typedef enum {
 } ManiaFilters;
 
 typedef enum { DLC_PLUS } ManiaDLC;
+#endif //! MANIA_USE_PLUS || GAME_IS_S3
+
+#endif //! GAME_IS_MANIA || GAME_IS_S3
+#endif //! GAME_NO_VARIABLES
+
+typedef enum { WIDE_SCR_XSIZE = 424, WIDE_SCR_XCENTER = 212 } ScreenSizes;
+
+#ifndef GAME_NO_VARIABLES
+#if GAME_IS_MANIA
+typedef enum {
+#if !MANIA_USE_PLUS
+    MODE_NOSAVE,
 #endif
+    MODE_MANIA, // officially called "MODE_SAVEGAME" in pre-plus, but it's easier to re-use names lol
+#if MANIA_USE_PLUS
+    MODE_ENCORE,
+#endif
+    MODE_TIMEATTACK,
+    MODE_COMPETITION,
+} ManiaGameModes;
+
+typedef enum {
+    ID_NONE     = 0 << 0,
+    ID_SONIC    = 1 << 0,
+    ID_TAILS    = 1 << 1,
+    ID_KNUCKLES = 1 << 2,
+#if MANIA_USE_PLUS
+    ID_MIGHTY = 1 << 3,
+    ID_RAY    = 1 << 4,
+#endif
+
+    ID_TAILS_ASSIST    = ID_TAILS << 8,
+    ID_KNUCKLES_ASSIST = ID_KNUCKLES << 8, // custom-added, can be used to check if "& knux" is active
+    ID_DEFAULT_PLAYER  = ID_SONIC | ID_TAILS_ASSIST,
+} ManiaPlayerIDs;
+
 typedef enum {
     SLOT_PLAYER1 = 0,
     SLOT_PLAYER2 = 1,
@@ -209,9 +186,53 @@ typedef enum {
 } ManiaGameCheats;
 #endif
 
+typedef enum {
+    MEDAL_DEBUGMODE   = 1 << 0,
+    MEDAL_ANDKNUCKLES = 1 << 1,
+    MEDAL_PEELOUT     = 1 << 2,
+    MEDAL_INSTASHIELD = 1 << 3,
+    MEDAL_NODROPDASH  = 1 << 4,
+#if MANIA_USE_PLUS
+    MEDAL_NOTIMEOVER = 1 << 5,
 #endif
+} ManiaMedalMods;
+
+typedef enum { MEDIA_DEMO } ManiaCategoryIDS;
+typedef enum { FORCE_SPLIT } ManiaScreenSplit;
+typedef enum { NO_SAVE_SLOT = 0xFF } ManiaSaveSlots;
+#endif //! GAME_IS_MANIA
 
 #if GAME_IS_S3
+typedef enum {
+    MODE_SAVEGAME,
+    MODE_ENCORE,
+    MODE_TIMEATTACK,
+    MODE_COMPETITION,
+} S3GameModes;
+
+typedef enum {
+    ID_NONE     = 0 << 0,
+    ID_SONIC    = 1 << 0,
+    ID_TAILS    = 1 << 1,
+    ID_KNUCKLES = 1 << 2,
+#if ORIGINS_USE_PLUS
+    ID_AMY    = 1 << 3,
+    ID_MIGHTY = 1 << 4,
+    ID_RAY    = 1 << 5,
+#else
+    ID_MIGHTY = 1 << 3,
+    ID_RAY    = 1 << 4,
+#endif
+
+    ID_TAILS_ASSIST    = ID_TAILS << 8,
+    ID_KNUCKLES_ASSIST = ID_KNUCKLES << 8, // custom-added, can be used to check if "& knux" is active
+    ID_DEFAULT_PLAYER  = ID_SONIC | ID_TAILS_ASSIST,
+
+#if ORIGINS_USE_PLUS
+    ID_AMY_TAILS = ID_AMY | ID_TAILS_ASSIST,
+#endif
+} S3PlayerIDs;
+
 typedef enum {
     GAME_S1,
     GAME_CD,
@@ -243,8 +264,25 @@ typedef enum {
     RESTARTFLAG_EXIT_SPECIAL_STAGE,
     RESTARTFLAG_GET_SUPER_EMERALD,
     RESTARTFLAG_EXIT_BONUS_STAGE,
-    RESTARTFLAG_4,
+    RESTARTFLAG_SCENE_AIZ1_FIRE,
 } S3RestartFlags;
+
+typedef enum {
+    STAGEFINISH_NONE,
+    STAGEFINISH_TRANSITION,
+    STAGEFINISH_IN_ACT_RELOAD,
+} S3StageFinishedTypes;
+
+typedef enum {
+    BOSSATTACK_CLEAR_NONE         = 0,
+    BOSSATTACK_CLEAR_FIREBREATH   = 1,
+    BOSSATTACK_CLEAR_FLAMEMOBILE  = 2,
+    BOSSATTACK_CLEAR_BIGSHAKER    = 3,
+    BOSSATTACK_CLEAR_SCREWMOBILE  = 4,
+    BOSSATTACK_CLEAR_GAKIN        = 5,
+    BOSSATTACK_CLEAR_DRILLMOBILE  = 6,
+    BOSSATTACK_CLEAR_FINALWEAPON2 = 9,
+} S3BossAttackClearTypes;
 
 typedef enum {
     SLOT_PLAYER1         = 0,
@@ -293,6 +331,7 @@ typedef enum {
     MISSIONNO_NONE            = 0,
     MISSIONNO_MERCY           = 8,
     MISSIONNO_RINGCHALLENGE50 = 10,
+    MISSIONNO_TIMEDBATBOT     = 11,
     MISSIONNO_AERIALATTACK    = 18,
     MISSIONNO_RINGVACCUM      = 30,
     MISSIONNO_BALLOONBURST    = 38,
@@ -300,19 +339,34 @@ typedef enum {
 } S3MissionFunctions;
 
 typedef enum {
-    HUDENABLE_OFF,
-    HUDENABLE_ON,
-} S3HUDEnableTypes;
-
-typedef enum {
     MISSION_CONDITION_NONE,
     MISSION_CONDITION_CLEAR,
     MISSION_CONDITION_FAIL,
 } S3MissionConditions;
 
-#endif
+typedef enum {
+    KILL_ENEMY_ATTR_DEFAULT,
+    KILL_ENEMY_ATTR_ANIMALPRISON,
+    KILL_ENEMY_ATTR_SPINDASH,
+    KILL_ENEMY_ATTR_GLIDING,
+    KILL_ENEMY_ATTR_RINGVACUUM,
+    KILL_ENEMY_ATTR_BALLOON,
+    KILL_ENEMY_ATTR_FIREDASH,
+} S3NotifyKillEnemyAttributes;
 
-#endif
+typedef enum {
+    HUDENABLE_OFF,
+    HUDENABLE_ON,
+} S3HUDEnableTypes;
+
+typedef enum {
+    TITLEMODE_SHOW_LOGOS,
+    TITLEMODE_SKIP_LOGOS,
+} S3TitleModes;
+
+typedef enum { NO_SAVE_SLOT = 0xFF } S3SaveSlots;
+#endif //! GAME_IS_S3
+#endif //! GAME_NO_VARIABLES
 
 #if RETRO_REV0U
 typedef enum {
@@ -355,16 +409,17 @@ typedef enum {
     NOTIFY_STATS_SAVE_FUTURE   = 0xA4,
     NOTIFY_STATS_CHARA_ACTION2 = 0xA5,
 
-    NOTIFY_1000                = 1000,
-    NOTIFY_1001                = 1001,
-    NOTIFY_1002                = 1002,
-    NOTIFY_PLAYER_SAVED_VALUES = 1003,
-    NOTIFY_1004                = 1004,
-    NOTIFY_1005                = 1005,
-    NOTIFY_TITLECARD_INIT      = 1006,
-    NOTIFY_1007                = 1007,
-} NotifyCallbackIDs;
+    NOTIFY_DELETE_SAVE_SLOT       = 1001,
+    NOTIFY_SELECT_SAVE_SLOT       = 1002,
+    NOTIFY_PLAYER_SAVED_VALUES    = 1003,
+    NOTIFY_STAGE_RESTART_OVERRIDE = 1004,
+    NOTIFY_START_STAGE            = 1005,
+    NOTIFY_DISPLAY_TITLECARD      = 1006,
+#if ORIGINS_USE_PLUS
+    NOTIFY_DISPLAY_PLUS_DLC_ERROR = 1007,
 #endif
+} NotifyCallbackIDs;
+#endif //! RETRO_REV0U
 
 #if GAME_IS_S3 && !defined(GAME_NO_VARIABLES)
 typedef enum {
@@ -383,18 +438,20 @@ typedef enum {
 #define NotifyCallback(callback, param1, param2, param3)                                                                                             \
     if (HasNotifyCallback())                                                                                                                         \
         RSDK.NotifyCallback(callback, param1, param2, param3);
+
+#define SetGameFinished() RSDK.SetGameFinished();
 #else
 #define HasNotifyCallback() false
 
 #define NotifyCallback(callback, param1, param2, param3)
-#endif
+#define SetGameFinished()
+#endif //! RETRO_REV0U
 
 // =========================
 // GLOBAL VARIABLES
 // =========================
 
 #ifndef GAME_NO_GLOBALS
-
 #if GAME_IS_MANIA
 typedef struct {
     int32 gameMode;
@@ -472,7 +529,7 @@ typedef struct {
 typedef ManiaGlobalVariables GlobalVariables;
 
 extern GlobalVariables *globals;
-#endif
+#endif //! GAME_IS_MANIA
 
 #if GAME_IS_S3
 typedef struct {
@@ -484,7 +541,7 @@ typedef struct {
     int32 blueSpheresInit;
     int32 atlEnabled;
     int32 atlEntityCount;
-#if GAME_VERSION == VER_104
+#if GAME_VERSION >= VER_104
     int32 atlEntitySlot[0x120];
     void *atlEntityData[0x120 * 0x114];
 #else
@@ -521,13 +578,13 @@ typedef struct {
     int32 restartMilliseconds;
     int32 restartScore;
     int32 restartScore1UP;
-    int32 restartLives[4];
+    int32 restartLives[PLAYER_COUNT];
     int32 restartMusicID;
     bool32 restartFlags;
-    int32 field_47B4C;
-    int32 showExtendedTimeHUD;
-    int32 overrideRestart;
-    int32 overrideUnknown;
+    int32 restartPostID;
+    bool32 timeOver;
+    bool32 overrideRestart;
+    bool32 overrideUseHiteRestartStage;
     Vector2 overrideRestartPos[PLAYER_COUNT];
     int32 overrideRestartSlot[PLAYER_COUNT];
     int32 overrideRestartDir[PLAYER_COUNT];
@@ -554,7 +611,7 @@ typedef struct {
     int32 characterFlags;
     bool32 vapeMode;
     int32 secrets;
-    int32 field_447BF4;
+    int32 superSecret;
     bool32 soundTestEnabled;
     bool32 superMusicEnabled;
     int32 playerSpriteStyle;
@@ -562,28 +619,27 @@ typedef struct {
     int32 ostStyle;
     int32 starpostStyle;
     bool32 stageFinished;
-    int32 field_447C14;
-    int32 storedOverrideUnknown;
+    bool32 displayAct1Title;
+    bool32 useHiteRestartStage;
     int32 atlCameraBoundsL[PLAYER_COUNT];
     int32 atlCameraBoundsR[PLAYER_COUNT];
     int32 atlCameraBoundsT[PLAYER_COUNT];
     int32 atlCameraBoundsB[PLAYER_COUNT];
     Vector2 atlCameraPos[PLAYER_COUNT];
     Vector2 atlOffset;
-    int32 unknownValues[4];
-    int32 unknownValues2[4];
-    int32 field_447CA4;
+    uint8 atlScratchRAM[0x20];
+    int32 atlTimer;
     bool32 tileCollisionMode;
     uint8 gravityDir;
     uint8 blueSpheresSeed[4];
     bool32 blueSpheresHasPerfect;
-    int32 field_447CB8;
-    int32 field_447CBC;
-    int32 field_447CC0;
-    int32 field_447CC4;
-    int32 field_447CC8;
-    uint8 field_447CCC;
-    int32 field_447CD0;
+    int32 blueSpheresLevel;
+    int32 blueSpheresProgress;
+    int32 blueSpheresNextLevel;
+    bool32 blueSpheresDisableAdvancement;
+    bool32 blueSpheresAdvancementStore;
+    uint8 blueSpheresUnlockFlag;
+    bool32 gameStarted;
     bool32 disableLives;
     bool32 mirrorMode;
     bool32 useManiaBehavior;
@@ -591,72 +647,84 @@ typedef struct {
     bool32 showHUD;
     bool32 showLives;
     bool32 disableSSAdvancement;
-    int32 anyPress;
+    bool32 pressButton;
+    int32 blueSpheresDifficulty;
     bool32 isBossAttack;
     uint8 bossAttackCategory;
-    int32 bossAttackRestartRings;
     uint8 bossAttackRestartMilliseconds;
     uint8 bossAttackRestartSeconds;
     uint8 bossAttackRestartMinutes;
+    int32 bossAttackRestartRings;
     uint8 bossAttackRestartPowerup;
+    uint8 bossAttackClearType;
     bool32 hasBossAttackRestartState;
+#if ORIGINS_USE_PLUS
+    bool32 hasPlusDLC;
+#endif
     int32 playMode;
     int32 callbackParam0;
     int32 callbackParam1;
     int32 callbackParam2;
     int32 callbackParam3;
     bool32 hudEnable;
-    bool32 useCoins;
+    bool32 coinMode;
     bool32 forceKillPlayer;
     int32 missionCondition;
     int32 missionFunctionNo;
+    int32 missionFunctionMask;
     int32 missionValue;
-    int32 missionEnd;
-    int32 continueFlag;
-    bool32 skipSaveSelect;
-    int32 field_447D40;
-    int32 field_447D44;
-    int32 field_447D48;
+    bool32 missionEnd;
+    bool32 continueFlag;
+    bool32 titleCardDisable;
+    bool32 bossOneLife;
+    int32 mainMenuMode;
     int32 callbackResult;
-    bool32 skipTitleIntro;
-    bool32 allowRetries;
-    bool32 clearBlueSpheres;
-    int32 field_447D5C;
-    int32 field_447D60;
-    int32 field_447D64;
-    int32 field_447D68;
-    int32 field_447D6C;
+    int32 titleMode;
+    bool32 oneStageFlag;
+    bool32 ssFastClearFlag;
+    int32 statsUsabilityParam1;
+    int32 statsUsabilityParam2;
+    int32 statsUsabilityParam3;
+    int32 statsUsabilityParam4;
+    int32 statsUsabilityParam5;
     int32 statsParam7;
     int32 statsParam8;
     int32 statsParam2;
-    int32 field_447D7C;
-    int32 field_447D80;
-    bool32 enableSSWaitRetry;
-    int32 field_447D88;
-    int32 field_447D8C;
-    int32 field_447D90;
-    int32 field_447D94;
-#if GAME_VERSION == VER_104
+    int32 unused1;
+    int32 unused2;
+    bool32 retryWait;
+    bool32 unused3;
+    bool32 cheatEmeralds;
+#if GAME_VERSION >= VER_104
+    bool32 stageSelectLRZB;
+    bool32 stageSelectDEZB;
     bool32 cheatsEnabled;
-    int32 field_447D9C;
+    bool32 enteredSpecialRing;
+    bool32 exitedHPZShrine;
 #endif
 } S3GlobalVariables;
 
 typedef S3GlobalVariables GlobalVariables;
 
 extern GlobalVariables *globals;
-#endif
-#endif
+#endif //! GAME_IS_S3
+#endif //! GAME_NO_GLOBALS
 
 // =========================
 // GAME HELPERS
 // =========================
 
 #ifndef GAME_NO_VARIABLES
-#if MANIA_USE_PLUS || GAME_IS_S3
+#if GAME_IS_MANIA
+#if MANIA_USE_PLUS
 #define isMainGameMode() (globals->gameMode == MODE_MANIA || globals->gameMode == MODE_ENCORE)
 #else
 #define isMainGameMode() (globals->gameMode == MODE_NOSAVE || globals->gameMode == MODE_MANIA)
+#endif
+#endif
+
+#if GAME_IS_S3
+#define isMainGameMode() (globals->gameMode == MODE_SAVEGAME || globals->gameMode == MODE_ENCORE)
 #endif
 
 #if GAME_IS_MANIA || GAME_IS_S3
