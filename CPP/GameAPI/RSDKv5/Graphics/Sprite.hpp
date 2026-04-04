@@ -2,6 +2,9 @@
 
 #include "../Types.hpp"
 #include "../EngineAPI.hpp"
+#include "../Game/Collision.hpp"
+
+#define FRAMEHITBOX_COUNT (0x8)
 
 namespace RSDK
 {
@@ -25,7 +28,7 @@ struct SpriteSheet {
     }
 };
 
-struct SpriteFrame {
+typedef struct {
     int16 sprX;
     int16 sprY;
     int16 width;
@@ -35,6 +38,14 @@ struct SpriteFrame {
     uint16 duration;
     uint16 unicodeChar;
     uint8 sheetID;
+} GameSpriteFrameType;
+
+static GameSpriteFrameType GameSpriteFrame;
+
+struct SpriteFrame : public GameSpriteFrameType {
+    typedef decltype(GameSpriteFrame) frame;
+    uint8 hitboxCount;
+    Hitbox hitboxes[FRAMEHITBOX_COUNT];
 };
 
 struct SpriteAnimation {
