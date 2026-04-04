@@ -54,6 +54,8 @@ struct Animator {
     inline int32 GetFrameID() { return RSDKTable->GetFrameID(this); }
     inline Hitbox *GetHitbox(uint8 id) { return RSDKTable->GetHitbox(this, id); }
     inline SpriteFrame *GetFrame(RSDK::SpriteAnimation aniFrames) { return aniFrames.GetFrame(animationID, frameID); }
+    inline SpriteFrame *GetFrame() { return &frames[frameID]; }
+    inline SpriteFrame *GetFrame(int32 frame) { return &frames[frame]; }
 
     inline void DrawSprite(Vector2 *position, bool32 screenRelative) { RSDKTable->DrawSprite(this, position, screenRelative); }
     inline void DrawString(Vector2 *position, String *string, int32 endFrame, int32 textLength, int32 align, int32 spacing, Vector2 *charOffsets,
