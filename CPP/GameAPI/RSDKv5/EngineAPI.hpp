@@ -107,12 +107,6 @@ enum GameLanguages {
     LANGUAGE_TC,
 };
 
-enum InputIDs {
-    INPUT_UNASSIGNED = -2,
-    INPUT_AUTOASSIGN = -1,
-    INPUT_NONE       = 0,
-};
-
 #if RETRO_USE_MOD_LOADER
 #if RETRO_MOD_LOADER_VER >= 3
 // Opaque pointer to a file descriptor
@@ -564,7 +558,11 @@ struct RSDKFunctionTable {
     // Sprite Animations & Frames
     uint16 (*LoadSpriteAnimation)(const char *filePath, uint8 scope);
     uint16 (*CreateSpriteAnimation)(const char *filePath, uint32 frameCount, uint32 listCount, uint8 scope);
+#if RETRO_MOD_LOADER_VER >= 2
     void (*SetSpriteAnimation)(uint16 aniFrames, uint16 listID, Animator *animator, bool32 forceApply, int32 frameID);
+#else
+    void (*SetSpriteAnimation)(uint16 aniFrames, uint16 listID, Animator *animator, bool32 forceApply, int16 frameID);
+#endif
     void (*EditSpriteAnimation)(uint16 aniFrames, uint16 listID, const char *name, int32 frameOffset, uint16 frameCount, int16 speed, uint8 loopIndex,
                                 uint8 rotationStyle);
     void (*SetSpriteString)(uint16 aniFrames, uint16 listID, String *string);
@@ -873,7 +871,7 @@ struct EngineInfo {
 #endif
 
 #else
-    RSDKFunctionTable *RSDKFunctionTable;
+    RSDKFunctionTable *RSDKTable;
 
     GameInfo *gameInfo;
     SceneInfo *sceneInfo;
@@ -902,9 +900,8 @@ inline void InitEngineInfo(EngineInfo *info)
 #if RETRO_REV02
     SKU = info->currentSKU;
 #endif
-
-    sceneInfo = info->sceneInfo;
-    controllerInfo    = info->controllerInfo;
+    sceneInfo      = info->sceneInfo;
+    controllerInfo = info->controllerInfo;
 
     analogStickInfoL = info->stickInfoL;
 #if RETRO_REV02
@@ -929,9 +926,5 @@ inline void InitEngineInfo(EngineInfo *info)
 #if GAME_CUSTOMLINKLOGIC
 // DEFINE THIS YOURSELF!!!!
 // This runs after LinkGameLogicDLL registers objects
-#if RETRO_REV02
 void LinkGameLogic(RSDK::EngineInfo *info);
-#else
-void LinkGameLogic(RSDK::EngineInfo info);
-#endif
 #endif

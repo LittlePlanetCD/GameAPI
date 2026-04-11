@@ -33,17 +33,12 @@
 #define foreach_group(type, entityOut) for (auto entityOut : GameObject::GetEntities<type>(FOR_GROUP_ENTITIES))
 #endif
 
-#ifndef foreach_break
 #define foreach_break                                                                                                                                \
     RSDK::RSDKTable->BreakForeachLoop();                                                                                                             \
     break
-#endif
-
-#ifndef foreach_return
 #define foreach_return                                                                                                                               \
     RSDK::RSDKTable->BreakForeachLoop();                                                                                                             \
     return
-#endif
 
 namespace RSDK
 {
@@ -62,7 +57,7 @@ enum ActiveFlags {
     ACTIVE_DISABLED = 0xFF,
 };
 
-enum VarTypes {
+enum VariableTypes {
     VAR_UINT8,
     VAR_UINT16,
     VAR_UINT32,
@@ -267,6 +262,8 @@ struct GameObject {
 
     static inline void Reset(int32 slot, uint32 type, void *data) { RSDKTable->ResetEntitySlot(slot, type, data); }
     static inline void Reset(int32 slot, uint32 type, int32 data) { RSDKTable->ResetEntitySlot(slot, type, INT_TO_VOID(data)); }
+
+    static inline void Destroy(int32 slot) { Reset(slot, TYPE_DEFAULTOBJECT, nullptr); }
 
     template <typename T> struct EntityIterator {
         T *entity;

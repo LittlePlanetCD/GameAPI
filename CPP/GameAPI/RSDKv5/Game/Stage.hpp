@@ -41,7 +41,6 @@ struct SceneListEntry {
     char id[0x04];
 #if RETRO_REV02
     uint8 filter;
-    uint8 padding[3];
 #endif
 };
 
