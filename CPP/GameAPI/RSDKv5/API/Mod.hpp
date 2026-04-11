@@ -307,7 +307,7 @@ extern const char *modID;
 #define DEFINE_PUBLIC_HOOK_FUNC(name, returnType, ...) returnType name::Implementation(__VA_ARGS__)
 
 // Register a defined hook of the same name
-#define REGISTER_HOOK_FUNC(name) name::Register();
+#define REGISTER_HOOK_FUNC(name) name::Register()
 
 #endif // !RETRO_MOD_LOADER_VER
 
