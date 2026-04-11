@@ -301,7 +301,7 @@ extern const char *modID;
 #define DECLARE_GAME_HOOK_FUNC(name, type, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(nullptr, name, type, returnType, __VA_ARGS__)
 
 // Declare a generic hook, hook into other mods' public functions by ID
-#define DECLARE_MOD_HOOK_FUNC(modID, name, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, __VA_ARGS__)
+#define DECLARE_MOD_HOOK_FUNC(modID, name, type, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, __VA_ARGS__)
 
 // Define a generic hook
 #define DEFINE_PUBLIC_HOOK_FUNC(name, returnType, ...) returnType name::Implementation(__VA_ARGS__)
