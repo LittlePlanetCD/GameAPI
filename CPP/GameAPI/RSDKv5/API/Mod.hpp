@@ -119,17 +119,7 @@ inline void Hook(const char *id, const char *functionName, void *functionPtr, vo
 template <typename Derived> class HookContainer
 {
 public:
-    constexpr HookContainer(const char *name)
-    {
-        this->modID__ = nullptr;
-        this->name__  = name;
-    }
-
-    constexpr HookContainer(const char *modID, const char *name)
-    {
-        this->modID__ = modID;
-        this->name__  = name;
-    }
+    constexpr HookContainer(const char *name, const char *modID = nullptr) : name__(name), modID__(modID) {}
 
     static void Register()
     {
@@ -293,7 +283,7 @@ extern const char *modID;
 // Declare a generic hook
 #define DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, ...)                                                                                 \
     struct type : RSDK::Mod::PublicFunctions::HookContainer<type> {                                                                                        \
-        type() : HookContainer(modID, name) {}                                                                                                       \
+        type() : HookContainer(name, modID) {}                                                                                                       \
         static returnType Implementation(__VA_ARGS__);                                                                                               \
     };
 
