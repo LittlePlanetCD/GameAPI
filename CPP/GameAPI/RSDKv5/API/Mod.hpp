@@ -119,17 +119,7 @@ inline void Hook(const char *id, const char *functionName, void *functionPtr, vo
 template <typename Derived> class HookContainer
 {
 public:
-    constexpr HookContainer(const char *name)
-    {
-        this->modID__ = nullptr;
-        this->name__  = name;
-    }
-
-    constexpr HookContainer(const char *modID, const char *name)
-    {
-        this->modID__ = modID;
-        this->name__  = name;
-    }
+    constexpr HookContainer(const char *name, const char *modID = nullptr) : name__(name), modID__(modID) {}
 
     static void Register()
     {
