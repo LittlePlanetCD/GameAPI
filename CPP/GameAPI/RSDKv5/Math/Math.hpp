@@ -19,7 +19,7 @@
 #define UNUSED(x) (void)x
 
 // floating point variants
-#define TO_FIXED_F(x)   ((x)*65536.0f)
+#define TO_FIXED_F(x)   ((x) * 65536.0f)
 #define FROM_FIXED_F(x) ((x) / 65536.0f)
 
 #define TO_FIXED(x)   ((x) << 16)

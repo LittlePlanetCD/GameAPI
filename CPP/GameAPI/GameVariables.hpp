@@ -9,90 +9,6 @@
 
 #define PLAYER_COUNT (4)
 
-#ifndef GAME_NO_VARIABLES
-
-#if GAME_IS_MANIA || GAME_IS_S3
-enum ManiaGameModes {
-#if !MANIA_USE_PLUS && !GAME_IS_S3
-    MODE_NOSAVE,
-#endif
-    MODE_MANIA, // officially called "MODE_SAVEGAME" in pre-plus, but it's easier to re-use names lol
-#if MANIA_USE_PLUS || GAME_IS_S3
-    MODE_ENCORE,
-#endif
-    MODE_TIMEATTACK,
-    MODE_COMPETITION,
-#if GAME_IS_S3
-    MODE_SAVEGAME = MODE_MANIA,
-#endif
-};
-
-enum ManiaPlayerIDs {
-    ID_NONE     = 0 << 0,
-    ID_SONIC    = 1 << 0,
-    ID_TAILS    = 1 << 1,
-    ID_KNUCKLES = 1 << 2,
-#if (GAME_IS_MANIA && MANIA_USE_PLUS) || (GAME_IS_S3 && !ORIGINS_USE_PLUS)
-    ID_MIGHTY = 1 << 3,
-    ID_RAY    = 1 << 4,
-#endif
-#if GAME_IS_S3 && ORIGINS_USE_PLUS
-    ID_AMY    = 1 << 3,
-    ID_MIGHTY = 1 << 4,
-    ID_RAY    = 1 << 5,
-#endif
-    ID_TAILS_ASSIST    = ID_TAILS << 8,
-    ID_KNUCKLES_ASSIST = ID_KNUCKLES << 8, // custom-added, can be used to check if "& knux" is active
-    ID_DEFAULT_PLAYER  = ID_SONIC | ID_TAILS_ASSIST,
-#if GAME_IS_S3 && ORIGINS_USE_PLUS
-    ID_AMY_TAILS = ID_AMY | ID_TAILS_ASSIST,
-#endif
-};
-
-#define GET_CHARACTER_ID(playerNum)                (((globals->playerID >> (8 * ((playerNum) - 1))) & 0xFF))
-#define CHECK_CHARACTER_ID(characterID, playerNum) (((globals->playerID >> (8 * ((playerNum) - 1))) & 0xFF) == (characterID))
-
-#if MANIA_USE_PLUS || GAME_IS_S3
-#define GET_STOCK_ID(stockNum)                (((globals->stock >> (8 * ((stockNum) - 1))) & 0xFF))
-#define CHECK_STOCK_ID(characterID, stockNum) (((globals->stock >> (8 * ((stockNum) - 1))) & 0xFF) == (characterID))
-#endif
-
-enum ManiaItemModes { ITEMS_FIXED, ITEMS_RANDOM, ITEMS_TELEPORT };
-
-enum ManiaPlaneFilterTypes {
-    PLANEFILTER_NONE,
-    PLANEFILTER_AL, // - Plane A, Low Layer
-    PLANEFILTER_BL, // - Plane B, Low Layer
-    PLANEFILTER_AH, // - Plane A, High Layer
-    PLANEFILTER_BH, // - Plane B, High Layer
-};
-#endif
-
-#if GAME_IS_MANIA
-enum ManiaMedalMods {
-    MEDAL_DEBUGMODE   = 1 << 0,
-    MEDAL_ANDKNUCKLES = 1 << 1,
-    MEDAL_PEELOUT     = 1 << 2,
-    MEDAL_INSTASHIELD = 1 << 3,
-    MEDAL_NODROPDASH  = 1 << 4,
-#if MANIA_USE_PLUS
-    MEDAL_NOTIMEOVER = 1 << 5,
-#endif
-};
-
-enum ManiaCategoryIDS { MEDIA_DEMO };
-
-enum ManiaScreenSplit { FORCE_SPLIT };
-#endif
-
-#if GAME_IS_MANIA || GAME_IS_S3
-enum ManiaSaveSlots { NO_SAVE_SLOT = 255 };
-#endif
-
-#endif
-
-enum ScreenSizes { WIDE_SCR_XSIZE = 424, WIDE_SCR_XCENTER = 212 };
-
 #if RETRO_REV02
 enum SceneFilters {
     // General Filters
@@ -110,8 +26,30 @@ enum SceneFilters {
 #endif
 
 #ifndef GAME_NO_VARIABLES
+#if GAME_IS_MANIA || GAME_IS_S3
+#define GET_CHARACTER_ID(playerNum)                (((globals->playerID >> (8 * ((playerNum) - 1))) & 0xFF))
+#define CHECK_CHARACTER_ID(characterID, playerNum) (((globals->playerID >> (8 * ((playerNum) - 1))) & 0xFF) == (characterID))
 
-#if (GAME_IS_MANIA && MANIA_USE_PLUS) || GAME_IS_S3
+#if MANIA_USE_PLUS || GAME_IS_S3
+#define GET_STOCK_ID(stockNum)                (((globals->stock >> (8 * ((stockNum) - 1))) & 0xFF))
+#define CHECK_STOCK_ID(characterID, stockNum) (((globals->stock >> (8 * ((stockNum) - 1))) & 0xFF) == (characterID))
+#endif //! MANIA_USE_PLUS || GAME_IS_S3
+
+enum ManiaItemModes {
+    ITEMS_FIXED,
+    ITEMS_RANDOM,
+    ITEMS_TELEPORT,
+};
+
+enum ManiaPlaneFilterTypes {
+    PLANEFILTER_NONE,
+    PLANEFILTER_AL, // - Plane A, Low Layer
+    PLANEFILTER_BL, // - Plane B, Low Layer
+    PLANEFILTER_AH, // - Plane A, High Layer
+    PLANEFILTER_BH, // - Plane B, High Layer
+};
+
+#if MANIA_USE_PLUS || GAME_IS_S3
 enum ManiaFilters {
     // Mania-Specific filter uses
     FILTER_BOTH   = FILTER_SLOT1,
@@ -120,7 +58,41 @@ enum ManiaFilters {
 };
 
 enum ManiaDLC { DLC_PLUS };
+#endif //! MANIA_USE_PLUS || GAME_IS_S3
+
+#endif //! GAME_IS_MANIA || GAME_IS_S3
+#endif //! GAME_NO_VARIABLES
+
+enum ScreenSizes { WIDE_SCR_XSIZE = 424, WIDE_SCR_XCENTER = 212 };
+
+#ifndef GAME_NO_VARIABLES
+#if GAME_IS_MANIA
+enum ManiaGameModes {
+#if !MANIA_USE_PLUS
+    MODE_NOSAVE,
 #endif
+    MODE_MANIA, // officially called "MODE_SAVEGAME" in pre-plus, but it's easier to re-use names lol
+#if MANIA_USE_PLUS
+    MODE_ENCORE,
+#endif
+    MODE_TIMEATTACK,
+    MODE_COMPETITION,
+};
+
+enum ManiaPlayerIDs {
+    ID_NONE     = 0 << 0,
+    ID_SONIC    = 1 << 0,
+    ID_TAILS    = 1 << 1,
+    ID_KNUCKLES = 1 << 2,
+#if MANIA_USE_PLUS
+    ID_MIGHTY = 1 << 3,
+    ID_RAY    = 1 << 4,
+#endif
+
+    ID_TAILS_ASSIST    = ID_TAILS << 8,
+    ID_KNUCKLES_ASSIST = ID_KNUCKLES << 8, // custom-added, can be used to check if "& knux" is active
+    ID_DEFAULT_PLAYER  = ID_SONIC | ID_TAILS_ASSIST,
+};
 
 #if GAME_IS_MANIA
 enum ManiaReservedEntities {
@@ -221,11 +193,55 @@ enum ManiaGameCheats {
     SECRET_RICKYMODE = 1 << 0,
     SECRET_SUPERDASH = 1 << 1,
 };
-#endif
+#endif //! MANIA_USE_PLUS
 
+enum ManiaMedalMods {
+    MEDAL_DEBUGMODE   = 1 << 0,
+    MEDAL_ANDKNUCKLES = 1 << 1,
+    MEDAL_PEELOUT     = 1 << 2,
+    MEDAL_INSTASHIELD = 1 << 3,
+    MEDAL_NODROPDASH  = 1 << 4,
+#if MANIA_USE_PLUS
+    MEDAL_NOTIMEOVER = 1 << 5,
 #endif
+};
+
+enum ManiaCategoryIDS { MEDIA_DEMO };
+enum ManiaScreenSplit { FORCE_SPLIT };
+enum ManiaSaveSlots { NO_SAVE_SLOT = 0xFF };
+#endif //! GAME_IS_MANIA
 
 #if GAME_IS_S3
+enum S3GameModes {
+    MODE_SAVEGAME,
+    MODE_ENCORE,
+    MODE_TIMEATTACK,
+    MODE_COMPETITION,
+};
+
+enum S3PlayerIDs {
+    ID_NONE     = 0 << 0,
+    ID_SONIC    = 1 << 0,
+    ID_TAILS    = 1 << 1,
+    ID_KNUCKLES = 1 << 2,
+#if ORIGINS_USE_PLUS
+    ID_AMY    = 1 << 3,
+    ID_MIGHTY = 1 << 4,
+    ID_RAY    = 1 << 5,
+#else
+    ID_MIGHTY = 1 << 3,
+    ID_RAY    = 1 << 4,
+#endif
+
+    ID_TAILS_ASSIST    = ID_TAILS << 8,
+    ID_KNUCKLES_ASSIST = ID_KNUCKLES << 8, // custom-added, can be used to check if "& knux" is active
+    ID_DEFAULT_PLAYER  = ID_SONIC | ID_TAILS_ASSIST,
+
+#if ORIGINS_USE_PLUS
+    ID_AMY_TAILS = ID_AMY | ID_TAILS_ASSIST,
+#endif
+};
+
 enum S3GameTypes {
     GAME_S1,
     GAME_CD,
@@ -356,8 +372,10 @@ enum S3TitleModes {
     TITLEMODE_SHOW_LOGOS,
     TITLEMODE_SKIP_LOGOS,
 };
-#endif
-#endif
+
+enum S3SaveSlots { NO_SAVE_SLOT = 0xFF };
+#endif //! GAME_IS_S3
+#endif //! GAME_NO_VARIABLES
 
 #if RETRO_REV0U
 enum NotifyCallbackIDs {
@@ -410,7 +428,7 @@ enum NotifyCallbackIDs {
     NOTIFY_DISPLAY_PLUS_DLC_ERROR = 1007,
 #endif
 };
-#endif
+#endif //! RETRO_REV0U
 
 #if GAME_IS_S3 && !defined(GAME_NO_VARIABLES)
 enum S3PlayModes {
@@ -424,7 +442,7 @@ enum S3PlayModes {
 #endif
 
 #if RETRO_REV0U
-#define HasNotifyCallback() RSDKTable->NotifyCallback != NULL
+#define HasNotifyCallback() RSDKTable->NotifyCallback != nullptr
 
 #define NotifyCallback(callback, param1, param2, param3)                                                                                             \
     if (HasNotifyCallback())                                                                                                                         \
@@ -436,7 +454,7 @@ enum S3PlayModes {
 
 #define NotifyCallback(callback, param1, param2, param3)
 #define SetGameFinished()
-#endif
+#endif //! RETRO_REV0U
 
 // =========================
 // GLOBAL VARIABLES
@@ -444,17 +462,15 @@ enum S3PlayModes {
 
 extern void **registerGlobals;
 extern int32 registerGlobalsSize;
+
 #if RETRO_REV0U
 extern void (*registerGlobalsInitCB)(void *globalVars);
-
 void RegisterGlobals(void **globals, int32 size, void (*initCB)(void *globals));
 #else
 void RegisterGlobals(void **globals, int32 size);
-#endif
+#endif //! RETRO_REV0U
 
 #ifndef GAME_NO_GLOBALS
-// Globals Example
-
 #if GAME_IS_MANIA
 // Use this if you're hooking onto Sonic Mania
 struct ManiaGlobalVariables {
@@ -663,7 +679,7 @@ struct S3GlobalVariables {
 #if ORIGINS_USE_PLUS
     bool32 hasPlusDLC;
 #endif
-    bool32 playMode;
+    int32 playMode;
     int32 callbackParam0;
     int32 callbackParam1;
     int32 callbackParam2;
@@ -714,6 +730,7 @@ struct GlobalVariables;
 
 extern GlobalVariables *globals;
 
+// Globals Example
 struct GlobalVariables {
     struct Constructor {
         Constructor()
@@ -735,21 +752,22 @@ struct GlobalVariables {
     // Your Variables Go Here
 };
 #endif
-
-#endif
+#endif //! GAME_NO_GLOBALS
 
 // =========================
 // GAME HELPERS
 // =========================
 
-#if GAME_IS_MANIA || GAME_IS_S3
-
-#if MANIA_USE_PLUS || GAME_IS_S3
+#if GAME_IS_MANIA
+#if MANIA_USE_PLUS
 #define isMainGameMode() (globals->gameMode == MODE_MANIA || globals->gameMode == MODE_ENCORE)
 #else
 #define isMainGameMode() (globals->gameMode == MODE_NOSAVE || globals->gameMode == MODE_MANIA)
 #endif
+#endif
 
+#if GAME_IS_S3
+#define isMainGameMode() (globals->gameMode == MODE_SAVEGAME || globals->gameMode == MODE_ENCORE)
 #endif
 
 #endif //! GAME_VARIABLES_H

@@ -34,9 +34,6 @@ typedef enum {
     PRINT_POPUP,
     PRINT_ERROR,
     PRINT_FATAL,
-#if RETRO_REV0U
-    PRINT_SCRIPTERR,
-#endif
 } PrintModes;
 #else
 typedef enum {

@@ -6,8 +6,8 @@ namespace RSDK
 {
 
 struct Matrix {
-    inline Matrix() : values() {}
-    inline Matrix(Matrix &other) { Matrix::Copy(this, &other); }
+    Matrix() : values() {}
+    Matrix(const Matrix &other) { Matrix::Copy(this, const_cast<Matrix *>(&other)); }
 
     int32 values[4][4];
 
@@ -24,15 +24,19 @@ struct Matrix {
     static inline void Copy(Matrix *matDest, Matrix *matSrc) { RSDKTable->MatrixCopy(matDest, matSrc); }
     static inline void Inverse(Matrix *dest, Matrix *matrix) { RSDKTable->MatrixInverse(dest, matrix); }
 
-    inline Matrix &operator*=(Matrix &other)
+    inline int32 *operator[](int32 index) { return values[index]; }
+    inline const int32 *operator[](int32 index) const { return values[index]; }
+
+    inline Matrix &operator*=(const Matrix &other)
     {
-        Matrix::Multiply(this, this, &other);
+        Matrix temporary = { *this };
+        Matrix::Multiply(this, &temporary, const_cast<Matrix *>(&other));
         return *this;
     }
 
     friend inline Matrix operator*(Matrix &lhs, Matrix &rhs)
     {
-        Matrix dest;
+        Matrix dest = {};
         Matrix::Multiply(&dest, &lhs, &rhs);
         return dest;
     }
