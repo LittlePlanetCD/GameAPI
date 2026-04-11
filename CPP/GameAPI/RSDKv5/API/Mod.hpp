@@ -283,7 +283,7 @@ extern const char *modID;
 // Declare a generic hook
 #define DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, ...)                                                                                 \
     struct type : RSDK::Mod::PublicFunctions::HookContainer<type> {                                                                                        \
-        type() : HookContainer(modID, name) {}                                                                                                       \
+        type() : HookContainer(name, modID) {}                                                                                                       \
         static returnType Implementation(__VA_ARGS__);                                                                                               \
     };
 
