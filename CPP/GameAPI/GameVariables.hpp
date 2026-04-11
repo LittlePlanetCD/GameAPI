@@ -94,7 +94,6 @@ enum ManiaPlayerIDs {
     ID_DEFAULT_PLAYER  = ID_SONIC | ID_TAILS_ASSIST,
 };
 
-#if GAME_IS_MANIA
 enum ManiaReservedEntities {
     SLOT_PLAYER1 = 0,
     SLOT_PLAYER2 = 1,
@@ -126,11 +125,7 @@ enum ManiaReservedEntities {
     SLOT_PBL_CAMERA  = 10,
     SLOT_BSS_MESSAGE = 11,
     SLOT_UFO_HUD     = 11,
-#if MANIA_USE_PLUS || GAME_IS_S3
-    SLOT_ZONE = 12,
-#else
-    SLOT_ZONE = 8,
-#endif
+    SLOT_ZONE        = MANIA_USE_PLUS ? 12 : 8,
     // 13 = ???
     // 14 = ???
     SLOT_CUTSCENESEQ         = 15,
