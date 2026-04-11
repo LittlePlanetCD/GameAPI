@@ -292,7 +292,7 @@ extern const char *modID;
 #if RETRO_MOD_LOADER_VER >= 3
 // Declare a generic hook
 #define DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, ...)                                                                                 \
-    struct type : Mod::PublicFunctions::HookContainer<type> {                                                                                        \
+    struct type : RSDK::Mod::PublicFunctions::HookContainer<type> {                                                                                        \
         type() : HookContainer(modID, name) {}                                                                                                       \
         static returnType Implementation(__VA_ARGS__);                                                                                               \
     };
@@ -301,13 +301,13 @@ extern const char *modID;
 #define DECLARE_GAME_HOOK_FUNC(name, type, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(nullptr, name, type, returnType, __VA_ARGS__)
 
 // Declare a generic hook, hook into other mods' public functions by ID
-#define DECLARE_MOD_HOOK_FUNC(modID, name, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, __VA_ARGS__)
+#define DECLARE_MOD_HOOK_FUNC(modID, name, type, returnType, ...) DECLARE_PUBLIC_HOOK_FUNC(modID, name, type, returnType, __VA_ARGS__)
 
 // Define a generic hook
 #define DEFINE_PUBLIC_HOOK_FUNC(name, returnType, ...) returnType name::Implementation(__VA_ARGS__)
 
 // Register a defined hook of the same name
-#define REGISTER_HOOK_FUNC(name) name::Register();
+#define REGISTER_HOOK_FUNC(name) name::Register()
 
 #endif // !RETRO_MOD_LOADER_VER
 
