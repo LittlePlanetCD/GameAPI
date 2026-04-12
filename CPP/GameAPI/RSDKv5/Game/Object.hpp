@@ -268,7 +268,7 @@ struct GameObject {
     template <typename T> struct EntityIterator {
         T *entity;
         uint16 group;
-        int32 type;
+        ForeachTypes type;
 
         inline T *operator*() { return entity; }
 
@@ -291,17 +291,17 @@ struct GameObject {
 
     template <typename T> struct EntityList {
         uint16 group;
-        int32 type;
+        ForeachTypes type;
 
         inline EntityIterator<T> begin() { return { nullptr, group, type }; }
         inline EntityIterator<T> end() { return { nullptr, group, type }; }
     };
 
-    template <typename T> static inline EntityList<T> GetEntities(int32 type) { return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type }; }
-    template <typename T> static inline EntityList<T> GetEntities(int32 type, uint16 group) { return { group, type }; }
+    template <typename T> static inline EntityList<T> GetEntities(ForeachTypes type) { return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type }; }
+    template <typename T> static inline EntityList<T> GetEntities(ForeachTypes type, uint16 group) { return { group, type }; }
 
-    static inline EntityList<Entity> GetEntities(int32 type) { return { (uint16)GROUP_ALL, type }; }
-    static inline EntityList<Entity> GetEntities(int32 type, uint16 group) { return { group, type }; }
+    static inline EntityList<Entity> GetEntities(ForeachTypes type) { return { (uint16)GROUP_ALL, type }; }
+    static inline EntityList<Entity> GetEntities(ForeachTypes type, uint16 group) { return { group, type }; }
 
     static inline uint16 Find(const char *name) { return RSDKTable->FindObject(name); }
 

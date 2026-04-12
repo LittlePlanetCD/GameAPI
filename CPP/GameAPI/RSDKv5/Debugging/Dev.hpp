@@ -34,6 +34,9 @@ typedef enum {
     PRINT_POPUP,
     PRINT_ERROR,
     PRINT_FATAL,
+#if RETRO_REV0U
+    PRINT_SCRIPTERR,
+#endif
 } PrintModes;
 #else
 typedef enum {
@@ -53,7 +56,7 @@ inline void Print(PrintModes severity, const char *message, ...)
     vsprintf_s(buffer, message, args);
     RSDKTable->PrintLog(severity, buffer);
 };
-inline void PrintText(PrintModes severity, const char *message) { RSDKTable->PrintText(severity, message); };
+inline void PrintText(PrintModes severity, const char *message) { RSDKTable->PrintText(severity, message); }
 inline void PrintString(PrintModes severity, String *string) { RSDKTable->PrintString(severity, string); }
 inline void PrintUInt32(PrintModes severity, const char *message, uint32 integer) { RSDKTable->PrintUInt32(severity, message, integer); }
 inline void PrintInt32(PrintModes severity, const char *message, int32 integer) { RSDKTable->PrintInt32(severity, message, integer); }
