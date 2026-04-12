@@ -36,7 +36,7 @@ struct Matrix {
 
     friend inline Matrix operator*(Matrix &lhs, Matrix &rhs)
     {
-        Matrix dest = {};
+        Matrix dest;
         Matrix::Multiply(&dest, &lhs, &rhs);
         return dest;
     }
