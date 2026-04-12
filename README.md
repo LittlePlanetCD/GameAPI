@@ -1,5 +1,5 @@
 ## RSDKv5-GameAPI
-An API bindings library, used for modding/developing projects based on the [Retro Engine v5](https://RSDKModding.com/RSDKv5) and its [decompilation](https://github.com/RSDKModding/RSDKv5-Decompilation).
+An API bindings library, used for modding/developing projects based on the [Retro Engine v5](https://rsdkmodding.com/RSDKv5) and its [decompilation](https://github.com/RSDKModding/RSDKv5-Decompilation).
 
 ## **SUPPORT THE DEVELOPERS OF THE RETRO ENGINE**
 We do not own the Retro Engine in any way, shape or form, and this project would not have been possible had they not developed RSDK in the first place. Retro Engine is currently owned by [Evening Star](https://eveningstar.studio/); we highly urge you to follow & support their projects if you enjoyed this project of ours!
