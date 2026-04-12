@@ -722,9 +722,6 @@ typedef enum {
     PRINT_POPUP,
     PRINT_ERROR,
     PRINT_FATAL,
-#if RETRO_REV0U
-    PRINT_SCRIPTERR,
-#endif
 } PrintModes;
 #else
 typedef enum {
@@ -1586,10 +1583,10 @@ typedef struct {
     void (*MatrixMultiply)(Matrix *dest, Matrix *matrixA, Matrix *matrixB);
     void (*MatrixTranslateXYZ)(Matrix *matrix, int32 x, int32 y, int32 z, bool32 setIdentity);
     void (*MatrixScaleXYZ)(Matrix *matrix, int32 x, int32 y, int32 z);
-    void (*MatrixRotateX)(Matrix *matrix, int16 angle);
-    void (*MatrixRotateY)(Matrix *matrix, int16 angle);
-    void (*MatrixRotateZ)(Matrix *matrix, int16 angle);
-    void (*MatrixRotateXYZ)(Matrix *matrix, int16 x, int16 y, int16 z);
+    void (*MatrixRotateX)(Matrix *matrix, int32 angle);
+    void (*MatrixRotateY)(Matrix *matrix, int32 angle);
+    void (*MatrixRotateZ)(Matrix *matrix, int32 angle);
+    void (*MatrixRotateXYZ)(Matrix *matrix, int32 x, int32 y, int32 z);
     void (*MatrixInverse)(Matrix *dest, Matrix *matrix);
     void (*MatrixCopy)(Matrix *matDest, Matrix *matSrc);
 
@@ -1645,7 +1642,7 @@ typedef struct {
     void (*DrawFace)(Vector2 *vertices, int32 vertCount, int32 r, int32 g, int32 b, int32 alpha, int32 inkEffect);
     void (*DrawBlendedFace)(Vector2 *vertices, color *vertColors, int32 vertCount, int32 alpha, int32 inkEffect);
     void (*DrawSprite)(Animator *animator, Vector2 *position, bool32 screenRelative);
-    void (*DrawDeformedSprite)(uint16 sheetID, int32 inkEffect, bool32 screenRelative);
+    void (*DrawDeformedSprite)(uint16 sheetID, int32 inkEffect, int32 alpha);
     void (*DrawText)(Animator *animator, Vector2 *position, String *string, int32 endFrame, int32 textLength, int32 align, int32 spacing,
                      void *unused, Vector2 *charOffsets, bool32 screenRelative);
     void (*DrawTile)(uint16 *tiles, int32 countX, int32 countY, Vector2 *position, Vector2 *offset, bool32 screenRelative);
@@ -1734,14 +1731,14 @@ typedef struct {
     uint16 (*GetSfx)(const char *path);
     int32 (*PlaySfx)(uint16 sfx, int32 loopPoint, int32 priority);
     void (*StopSfx)(uint16 sfx);
-    int32 (*PlayStream)(const char *filename, uint32 channel, uint32 startPos, uint32 loopPoint, bool32 loadASync);
-    void (*SetChannelAttributes)(uint8 channel, float volume, float pan, float speed);
-    void (*StopChannel)(uint32 channel);
-    void (*PauseChannel)(uint32 channel);
-    void (*ResumeChannel)(uint32 channel);
+    int32 (*PlayStream)(const char *filename, int32 channel, uint32 startPos, uint32 loopPoint, bool32 loadASync);
+    void (*SetChannelAttributes)(int32 channel, float volume, float pan, float speed);
+    void (*StopChannel)(int32 channel);
+    void (*PauseChannel)(int32 channel);
+    void (*ResumeChannel)(int32 channel);
     bool32 (*IsSfxPlaying)(uint16 sfx);
-    bool32 (*ChannelActive)(uint32 channel);
-    uint32 (*GetChannelPos)(uint32 channel);
+    bool32 (*ChannelActive)(int32 channel);
+    uint32 (*GetChannelPos)(int32 channel);
 
     // Videos & "HD Images"
     bool32 (*LoadVideo)(const char *filename, double startDelay, bool32 (*skipCallback)(void));

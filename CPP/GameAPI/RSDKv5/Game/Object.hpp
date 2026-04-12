@@ -21,8 +21,8 @@
 #define TYPE_COUNT      (0x100)
 #define TYPEGROUP_COUNT (TYPE_COUNT + 4)
 
-#define RSDK_THIS(obj)                    auto *self = (obj *)sceneInfo->entity
-#define RSDK_THIS_GEN()                   GameObject::Entity *self = (GameObject::Entity *)sceneInfo->entity
+#define RSDK_THIS(obj)                    auto *self = (obj *)this
+#define RSDK_THIS_GEN()                   GameObject::Entity *self = (GameObject::Entity *)this
 #define RSDK_GET_ENTITY(slot, class)      (GameObject::Get<class>(slot))
 #define RSDK_GET_ENTITY_GEN(slot)         (GameObject::Get(slot))
 #define CREATE_ENTITY(object, data, x, y) (GameObject::Create<object>(data, x, y))
@@ -265,77 +265,43 @@ struct GameObject {
 
     static inline void Destroy(int32 slot) { Reset(slot, TYPE_DEFAULTOBJECT, nullptr); }
 
-    template <typename T> static inline std::list<T *> GetEntities(ForeachTypes type)
-    {
-        std::list<T *> list;
+    template <typename T> struct EntityIterator {
+        T *entity;
+        uint16 group;
+        ForeachTypes type;
 
-        uint16 group = T::sVars ? T::sVars->classID : GROUP_ALL;
+        inline T *operator*() { return entity; }
 
-        T *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-
-        return list;
-    }
-
-    template <typename T> static inline std::list<T *> GetEntities(ForeachTypes type, uint16 group)
-    {
-        std::list<T *> list;
-
-        T *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(group, (void **)&entity)) list.push_back(entity);
-        }
+        inline bool operator!=(const EntityIterator &)
+        {
+            switch (type) {
+                case FOR_ALL_ENTITIES: return RSDKTable->GetAllEntities(group, (void **)&entity);
+                case FOR_ACTIVE_ENTITIES: return RSDKTable->GetActiveEntities(group, (void **)&entity);
 #if RETRO_USE_MOD_LOADER && RETRO_MOD_LOADER_VER >= 2
-        else if (type == FOR_GROUP_ENTITIES) {
-            while (modTable->GetGroupEntities(group, (void **)&entity)) list.push_back(entity);
-        }
+                case FOR_GROUP_ENTITIES: return modTable->GetGroupEntities(group, (void **)&entity);
 #endif
+                default: break;
+            }
 
-        return list;
-    }
-
-    static inline std::list<Entity *> GetEntities(ForeachTypes type)
-    {
-        std::list<Entity *> list;
-
-        Entity *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(GROUP_ALL, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(GROUP_ALL, (void **)&entity)) list.push_back(entity);
-        }
-#if RETRO_USE_MOD_LOADER && RETRO_MOD_LOADER_VER >= 2
-        else if (type == FOR_GROUP_ENTITIES) {
-            while (modTable->GetGroupEntities(GROUP_ALL, (void **)&entity)) list.push_back(entity);
-        }
-#endif
-
-        return list;
-    }
-
-    static inline std::list<Entity *> GetEntities(ForeachTypes type, uint16 group)
-    {
-        std::list<Entity *> list;
-
-        Entity *entity = nullptr;
-        if (type == FOR_ALL_ENTITIES) {
-            while (RSDKTable->GetAllEntities(group, (void **)&entity)) list.push_back(entity);
-        }
-        else if (type == FOR_ACTIVE_ENTITIES) {
-            while (RSDKTable->GetActiveEntities(group, (void **)&entity)) list.push_back(entity);
+            return false;
         }
 
-        return list;
-    }
+        inline void operator++() const {}
+    };
+
+    template <typename T> struct EntityList {
+        uint16 group;
+        ForeachTypes type;
+
+        inline EntityIterator<T> begin() { return { nullptr, group, type }; }
+        inline EntityIterator<T> end() { return { nullptr, group, type }; }
+    };
+
+    template <typename T> static inline EntityList<T> GetEntities(ForeachTypes type) { return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type }; }
+    template <typename T> static inline EntityList<T> GetEntities(ForeachTypes type, uint16 group) { return { group, type }; }
+
+    static inline EntityList<Entity> GetEntities(ForeachTypes type) { return { (uint16)GROUP_ALL, type }; }
+    static inline EntityList<Entity> GetEntities(ForeachTypes type, uint16 group) { return { group, type }; }
 
     static inline uint16 Find(const char *name) { return RSDKTable->FindObject(name); }
 
