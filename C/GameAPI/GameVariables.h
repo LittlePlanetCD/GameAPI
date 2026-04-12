@@ -629,7 +629,7 @@ typedef struct {
     Vector2 atlOffset;
     uint8 atlScratchRAM[0x20];
     int32 atlTimer;
-    bool32 tileCollisionMode;
+    int32 tileCollisionMode;
     uint8 gravityDir;
     uint8 blueSpheresSeed[4];
     bool32 blueSpheresHasPerfect;
