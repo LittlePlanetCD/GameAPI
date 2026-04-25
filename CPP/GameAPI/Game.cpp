@@ -87,6 +87,11 @@ void LinkGameLogicDLL(RSDK::EngineInfo info)
 
         if (registration->name) {
 #if RETRO_USE_MOD_LOADER
+            if (registration->isHook) {
+                modTable->RegisterObjectHook(registration->staticVars, registration->name);
+                continue;
+            }
+
             if (registration->isModded) {
 #if RETRO_REV0U
                 modTable->RegisterObject(registration->staticVars, registration->modStaticVars, registration->name, registration->entityClassSize,
