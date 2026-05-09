@@ -5,7 +5,7 @@
 
 namespace RSDK
 {
-#if RETRO_MOD_LOADER_VER >= 3
+#if RETRO_USE_MOD_LOADER && RETRO_MOD_LOADER_VER >= 3
 namespace IO
 {
 enum IOSeekWhence {
