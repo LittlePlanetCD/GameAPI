@@ -297,7 +297,10 @@ struct GameObject {
         inline EntityIterator<T> end() { return { nullptr, group, type }; }
     };
 
-    template <typename T> static inline EntityList<T> GetEntities(ForeachTypes type) { return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type }; }
+    template <typename T> static inline EntityList<T> GetEntities(ForeachTypes type)
+    {
+        return { T::sVars ? T::sVars->classID : (uint16)GROUP_ALL, type };
+    }
     template <typename T> static inline EntityList<T> GetEntities(ForeachTypes type, uint16 group) { return { group, type }; }
 
     static inline EntityList<Entity> GetEntities(ForeachTypes type) { return { (uint16)GROUP_ALL, type }; }
@@ -339,6 +342,7 @@ struct ObjectRegistration {
     uint32 modStaticClassSize;
     const char *inherit;
     bool32 isModded;
+    bool32 isHook;
 #endif
 };
 
@@ -536,6 +540,21 @@ static inline typename E::Static *RegisterObject(typename E::Static **sVars, typ
     }
     *sVars    = nullptr;
     *modSVars = nullptr;
+
+    return nullptr;
+}
+
+template <typename E> static inline typename E::Static *RegisterObjectHook(typename E::Static **sVars, const char *name)
+{
+    if (registerObjectListCount < OBJECT_COUNT) {
+        ObjectRegistration *object = &registerObjectList[registerObjectListCount++];
+        memset(object, 0, sizeof(ObjectRegistration));
+        object->name = name;
+
+        object->staticVars = (void **)sVars;
+        object->isHook     = true;
+    }
+    *sVars = nullptr;
 
     return nullptr;
 }
