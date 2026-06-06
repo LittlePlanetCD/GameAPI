@@ -3,7 +3,9 @@
 #include "../Types.hpp"
 #include "../EngineAPI.hpp"
 
-#define TILE_SIZE (16)
+#define TILE_SIZE   (16)
+#define TILE_COUNT  (0x400)
+#define CPATH_COUNT (2)
 
 namespace RSDK
 {
@@ -68,6 +70,9 @@ struct TileInfo {
     uint8 rWallAngle;
     uint8 roofAngle;
     uint8 flag;
+    uint8 unused1;
+    uint8 unused2;
+    uint8 unused3;
 };
 #endif
 
