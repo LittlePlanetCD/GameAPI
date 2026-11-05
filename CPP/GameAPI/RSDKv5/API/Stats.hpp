@@ -3,7 +3,7 @@
 #include "../Types.hpp"
 #include "../EngineAPI.hpp"
 
-namespace RSDK
+namespace GameAPI::RSDK
 {
 #if RETRO_REV02
 struct StatInfo {
@@ -17,11 +17,11 @@ namespace API
 namespace Stats
 {
 
-inline void TryTrackStat(StatInfo *stat) { APITable->TryTrackStat(stat); }
-inline bool32 GetEnabled() { return APITable->GetStatsEnabled(); }
-inline void SetEnabled(bool32 enabled) { APITable->SetStatsEnabled(enabled); }
+RSDK_FORCE_INLINE void TryTrackStat(StatInfo *stat) { APITable->TryTrackStat(stat); }
+RSDK_FORCE_INLINE bool32 GetEnabled() { return APITable->GetStatsEnabled(); }
+RSDK_FORCE_INLINE void SetEnabled(bool32 enabled) { APITable->SetStatsEnabled(enabled); }
 
 } // namespace Stats
 } // namespace API
 #endif
-} // namespace RSDK
+} // namespace GameAPI::RSDK

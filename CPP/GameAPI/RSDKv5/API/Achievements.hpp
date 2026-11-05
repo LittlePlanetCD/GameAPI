@@ -4,7 +4,7 @@
 #include "../EngineAPI.hpp"
 
 #if RETRO_REV02
-namespace RSDK
+namespace GameAPI::RSDK
 {
 
 struct AchievementID {
@@ -18,16 +18,16 @@ namespace API
 namespace Achievements
 {
 
-inline void TryUnlockAchievement(AchievementID *id) { APITable->TryUnlockAchievement(id); }
-inline bool32 GetEnabled() { return APITable->GetAchievementsEnabled(); }
-inline void SetEnabled(bool32 enabled) { APITable->SetAchievementsEnabled(enabled); }
+RSDK_FORCE_INLINE void TryUnlockAchievement(AchievementID *id) { APITable->TryUnlockAchievement(id); }
+RSDK_FORCE_INLINE bool32 GetEnabled() { return APITable->GetAchievementsEnabled(); }
+RSDK_FORCE_INLINE void SetEnabled(bool32 enabled) { APITable->SetAchievementsEnabled(enabled); }
 #if RETRO_USE_EGS
-inline bool32 CheckEnabled() { return APITable->CheckAchievementsEnabled(); }
-inline void SetNames(String **names, int32 count) { APITable->SetAchievementNames(names, count); }
+RSDK_FORCE_INLINE bool32 CheckEnabled() { return APITable->CheckAchievementsEnabled(); }
+RSDK_FORCE_INLINE void SetNames(String **names, int32 count) { APITable->SetAchievementNames(names, count); }
 #endif
 
 } // namespace Achievements
 
 } // namespace API
-} // namespace RSDK
+} // namespace GameAPI::RSDK
 #endif

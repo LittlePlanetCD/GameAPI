@@ -3,7 +3,7 @@
 #include "../Types.hpp"
 #include "../EngineAPI.hpp"
 
-namespace RSDK
+namespace GameAPI::RSDK
 {
 
 #if RETRO_REV02
@@ -12,10 +12,10 @@ namespace API
 {
 namespace RichPresence
 {
-inline void Set(int32 id, String *text) { APITable->SetRichPresence(id, text); }
+RSDK_FORCE_INLINE void Set(int32 id, String *text) { APITable->SetRichPresence(id, text); }
 } // namespace RichPresence
 } // namespace API
 
 #endif
 
-} // namespace RSDK
+} // namespace GameAPI::RSDK
